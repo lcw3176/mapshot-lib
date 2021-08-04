@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+    </head>
+    <body>
+        <img id="img1" style="display: none;">
+        <img id="img2" style="display: none;">
+    
+        <canvas id="can" width="2000", height="1000">
+
+        </canvas>
+    </body> 
+    <script src="./config.js"></script>
+    <script>
+        var centerLng = 127.01296205964806;
+        var centerLat = 37.6421211669229;
+        var correctFix = 0.00002833;
+        var fixPoint = 37.5668;
+        var xValue = 0.00268; // 0.005365
+        var yValue = 0.002125;
+
+        window.onload = function(){
+            var canvas = document.getElementById("can");
+            var ctx = canvas.getContext('2d');
+            var img1 = document.getElementById("img1");
+            var img2 = document.getElementById("img2");
+
+            ctx.drawImage(img1, 0, 0, img1.width, img1.height, 0, 0, 1000, 1000);
+            ctx.drawImage(img2, 0, 0, img2.width, img2.height, 1000, 0, 1000, 1000);
+        }
+        // yValue += (fixPoint - centerLat) * correctFix;
+        // 0.0055
+        // 127.01564205964806
+        // 37.6421211669229
+    </script>
+</html>
