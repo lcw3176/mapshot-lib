@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+
+    </body>
+    <script src="../1.0.0/mapshot.min.js"></script>
+    <script src="./config.js"></script>
+    <script>
+        window.onload = function(){
+            let vworld = new mapshot.profile.Vworld();
+            vworld.setLayers(test.layers);
+            vworld.setMapType(test.mapType);
+            vworld.setCenter(new mapshot.coors.LatLng(test.x, test.y));
+            vworld.setLevel(test.level);
+            vworld.setKey(test.key);
+            vworld.setWidth(test.width);
+            vworld.setHeight(test.height);
+
+            console.log(vworld.getUrl());
+        }
+
+    </script>
+</html>
