@@ -55,15 +55,15 @@ class Naver{
     getHeight(){
         return this.height;
     }
-
-    showInfo(){
-        console.log(
-            this.mapType + "\n" +
-            this.center + "\n" +
-            this.level + "\n" +
-            this.key + "\n" +
-            this.width + "\n" +
-            this.height + "\n");
+    
+    getUrl(){
+        return "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?"
+             + "w=" + this.width
+             + "&h=" + this.height
+             + "&center=" +  this.center.getX() + "," + this.center.getY()
+             + "&level=" + this.level
+             + "&X-NCP-APIGW-API-KEY-ID=" + this.key
+             + "&maptype=" + this.mapType;
     }
 
 }
