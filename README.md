@@ -17,7 +17,8 @@ Naver Static Map Api를 조금 더 편하게 이용하기 위해 만들어진 �
 
 2. CDN 이용
 ```html
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"></script>
+<script type="text/javascript" 
+src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"></script>
 ```
 ## 사용법
 
