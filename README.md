@@ -27,4 +27,4 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
 ## 호환성
 
 ## 라이센스
-- MIT
+- 이 라이브러리는 [MIT License](https://opensource.org/licenses/MIT)로 배포되었습니다.
