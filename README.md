@@ -25,6 +25,13 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
 ## 요구사항
 - Naver Static Map API
 ## 호환성
+|브라우저|동작|테스트 환경|비고|
+|----|----|----|---|
+|Google Chrome|O|Desktop, Mobile||
+|Microsoft Edge|O|Desktop||
+|Internet Explorer|△|Desktop|ie 10 버전만 테스트|
+|FireFox|O|Desktop||
+|Brave Browser|O|Desktop||
 
 ## 라이센스
 - 이 라이브러리는 [MIT License](https://opensource.org/licenses/MIT)로 배포되었습니다.
