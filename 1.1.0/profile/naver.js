@@ -16,12 +16,12 @@ class Naver{
     }
 
     setLevel(quality){
-        if(quality.HIGH){
+        if(quality == mapshot.Quality.HIGH){
             this.level = 18;
-        } else if(quality.NORMAL){
+        } else if(quality == mapshot.Quality.NORMAL){
             this.level = 16;
         } else{
-            throw "Parameter is not QUALITY";
+            throw "Parameter is not Quality Type";
         }
         
     }
