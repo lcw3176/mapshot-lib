@@ -4,6 +4,7 @@ class Naver{
         this.center;
         this.level;
         this.key;
+        this.height;
     }
 
     setMapType(param){
@@ -29,10 +30,14 @@ class Naver{
         this.key = param;
     }
 
+    setHeight(param){
+        this.height = param;
+    }
+
     getUrl(){
         return "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?"
              + "w=1000"
-             + "&h=1000"
+             + "&h=" + this.height +
              + "&center=" +  this.center.getX() + "," + this.center.getY()
              + "&level=" + this.level
              + "&X-NCP-APIGW-API-KEY-ID=" + this.key
