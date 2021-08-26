@@ -15,15 +15,8 @@ class Naver{
         this.center = param;
     }
 
-    setLevel(quality){
-        if(quality == mapshot.Quality.HIGH){
-            this.level = 18;
-        } else if(quality == mapshot.Quality.NORMAL){
-            this.level = 16;
-        } else{
-            throw "Parameter is not Quality Type";
-        }
-        
+    setLevel(zoomLevel){
+        this.level = zoomLevel;
     }
 
     setKey(param){
