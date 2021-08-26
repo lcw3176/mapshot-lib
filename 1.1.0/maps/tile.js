@@ -31,22 +31,21 @@ class Tile{
         
     }
 
-    setQuality(quality){
+    setLevel(level){
 
-        if(quality == mapshot.Quality.HIGH){
-            this.quality = quality;
+        if(level == mapshot.Radius.One.zoom || level == mapshot.Radius.Two.zoom){
             this.correctFix = 0.00002833;
             this.width = 0.00268;
             this.noLogoValue = 0.002070; 
             this.withLogoValue = 0.00204;
 
-        } else if(quality == mapshot.Quality.NORMAL){
+        } else if(level == mapshot.Radius.Five.zoom || level == mapshot.Radius.Ten.zoom){
             this.correctFix = 0.00011633;
             this.width = 0.01072;
             this.noLogoValue = 0.00829;
             this.withLogoValue = 0.00817;
         } else{
-            throw "Parameter is not Quality Type";
+            throw "Parameter is not mapshot.Radius Type";
         }   
     }
 
