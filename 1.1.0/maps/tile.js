@@ -8,8 +8,19 @@ class Tile{
         this.withLogoValue;
         this.correctFix;
 
-        this.tileImageLoadEvent = new CustomEvent("tileImageLoad");
-        this.tileImageErrorEvent = new CustomEvent("tileImageError");
+        this.total = 0;
+        this.complete = 0;
+
+        this.tileImageLoadStartEvent = new CustomEvent("tileImageLoadStart",{
+            total:this.total
+        });
+
+        this.tileImageOnLoadEvent = new CustomEvent("tileImageOnLoad",{
+            complete:this.complete
+        });
+        this.tileImageOnErrorEvent = new CustomEvent("tileImageOnError", {
+            complete:this.complete
+        });
     }
 
     generate(latlng){
@@ -91,7 +102,7 @@ class Tile{
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
-    drawTile(centerLatLng, sideBlockCount, naverProfile, callback){
+    draw(centerLatLng, sideBlockCount, naverProfile, callback){
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
@@ -111,7 +122,10 @@ class Tile{
         var returnXValue = startLatLng.getX();
         var order = 0;
         var isCorner = false;
+        this.total = sideBlockCount * sideBlockCount;
+        this.complete = 0;
 
+        document.body.dispatchEvent(this.tileImageLoadStartEvent);
         for (var i = 0; i < sideBlockCount; i++) {
             for (var j = 0; j < sideBlockCount; j++) {
 
@@ -134,19 +148,19 @@ class Tile{
 
                     _image.onload = function () {
                         ctx.drawImage(_image, 0, 0, _image.width, defaultBlockHeight - logoRemover, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                        imageLoadCount++;
-                        this.dispatchEvent(this.tileImageLoadEvent);
+                        this.complete++;
+                        document.body.dispatchEvent(this.tileImageLoadEvent);
 
-                        if (imageLoadCount == sideBlockCount * sideBlockCount) {
+                        if (this.complete == this.total) {
                             callback(canvas);
                         }
                     }
 
                     _image.onerror = function () {
-                        imageLoadCount++;
-                        this.dispatchEvent(this.tileImageErrorEvent);
+                        this.complete++;
+                        document.body.dispatchEvent(this.tileImageErrorEvent);
 
-                        if (imageLoadCount == sideBlockCount * sideBlockCount) {
+                        if (this.complete == this.total) {
                             callback(canvas);
                         }
                     }
