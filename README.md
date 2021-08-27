@@ -42,7 +42,7 @@ latlng.getY(); // 37.5642135
 var config = mapshot.config.Radius.One;
 
 var naverProfile = new mapshot.profile.Naver();
-naverProfile.setLevel(config.zoom);
+naverProfile.setLevel(/*config.zoom*/);
 naverProfile.setMapType("satellite_base");
 naverProfile.setKey(dev-key);
 ```
@@ -53,12 +53,12 @@ naverProfile.setKey(dev-key);
 var tile = new mapshot.maps.Tile();
 
 // 중심 좌표로부터 11 x 11 타일로 이루어진 사각형의 남동쪽 좌표 가져오기 
-var seLatLng = tile.getSE(11, nFixLat, centerLatLng);
+var seLatLng = tile.getSE(/**/, centerLatLng);
 seLatLng.getX();
 seLatLng.getY();
 
 // 중심 좌표로부터 17 x 17 타일로 이루어진 사각형의 북서쪽 좌표 가져오기
-var nwLatLng = tile.getNW(17, nFixLat, centerLatLng);
+var nwLatLng = tile.getNW(/**/, centerLatLng);
 // LatLng 클래스 리턴
 
 // 그 외 정의된 함수
@@ -70,7 +70,7 @@ var nwLatLng = tile.getNW(17, nFixLat, centerLatLng);
 ```javascript
 var tile = new mapshot.maps.Tile();
 
-tile.draw(coor, mapConfig.sideBlockCount, naverProfile, function(canvas){
+tile.draw(coor, /*mapConfig.sideBlockCount*/, naverProfile, function(canvas){
     canvas.toBlob(function (blob) {
         // do something...
     }, "image/jpeg");
