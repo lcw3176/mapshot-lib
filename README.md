@@ -38,53 +38,18 @@ latlng.getY(); // 37.5642135
 
 - naver 클래스
 ```javascript
-var latlng = new mapshot.coors.LatLng(37.5642135, 127.0016985);
-// Naver Static Map raster 문서 참고
-// https://api.ncloud-docs.com/docs/ai-naver-mapsstaticmap-raster
-// 현재 이 라이브러리는 Level 16, 18 지원
+// 반경 1키로 설정
+var config = mapshot.config.Radius.One;
+
 var naverProfile = new mapshot.profile.Naver();
-naverProfile.setWidth(1000);
-naverProfile.setHeight(1000);
-naverProfile.setCenter(latlng);
-naverProfile.setLevel(18);
+naverProfile.setLevel(config.zoom);
 naverProfile.setMapType("satellite_base");
 naverProfile.setKey(dev-key);
-
-naverProfile.getUrl();
-// https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?
-// w=1000&h=1000&center=127.0016985,37.5642135&level=18&
-// X-NCP-APIGW-API-KEY-ID=dev-key&maptype=satellite_base"
-```
-
-- nFixLat 클래스
-```javascript
-var latlng = new mapshot.coors.LatLng(37.5642135, 127.0016985);
-var naverProfile = new mapshot.profile.Naver();
-// 프로파일 세팅...
-
-var nFixLat = new mapshot.coors.NFixLat();
-
-// generate()
-// 네이버 지도 level에 따라서 Static Map 타일들 간의 거리 계산 
-nFixLat.generate(latlng, naverProfile);
-
-/* 
-코드 수정 필요
-
-// 네이버 로고가 없이 나옴
-nFix.getHeightBetweenBlock()
-
-// 네이버 로고와 함께 나옴
-nFix.getHeightBetweenBlockWithLogo()
-
-코드 수정 필요
-
-*/
 ```
 
 - tile 클래스
 ```javascript
-// 지도 타일의 모서리 좌표를 쉽게 구하는 클래스
+// 지도 관련 기능 클래스
 var tile = new mapshot.maps.Tile();
 
 // 중심 좌표로부터 11 x 11 타일로 이루어진 사각형의 남동쪽 좌표 가져오기 
@@ -99,39 +64,17 @@ var nwLatLng = tile.getNW(17, nFixLat, centerLatLng);
 // 그 외 정의된 함수
 // tile.getSW();
 // tile.getNE();
+// tile.draw();
 ```
 - 사용 예시
 ```javascript
-// 3 x 3 지도를 만드는 예시 (NW)
-var movingCoor = new mapshot.coors.LatLng(
-            latlng.getX() - nFix.getWidthBetweenBlock(),
-            latlng.getY() + nFix.getHeightBetweenBlockWithLogo());
+var tile = new mapshot.maps.Tile();
 
-var startXCoor = movingCoor.getX();
-
-for(var i = 0; i < 2; i++){
-    for(var j = 0; j < 2; j++){
-
-        naverProfile.setCenter(movingCoor);
-
-        var img = new Image();
-        img.crossOrigin = "*";
-        img.src = naverProfile.getUrl();
-
-        img.onload = function(){
-            // canvas.getContext("2d").drawImage();
-            // etc ......
-        }
-
-        movingCoor.init(
-            movingCoor.getX() + nFixLat.getWidthBetweenBlobk(), 
-            movingCoor.getY());
-    }
-
-    movingCoor.init(
-        startXCoor, 
-        movingCoor.getY() - nFixLat.getHeightBetweenBlockWithLogo());
-}
+tile.draw(coor, mapConfig.sideBlockCount, naverProfile, function(canvas){
+    canvas.toBlob(function (blob) {
+        // do something...
+    }, "image/jpeg");
+});
 ```
 ## 요구사항
 - Naver Static Map API
