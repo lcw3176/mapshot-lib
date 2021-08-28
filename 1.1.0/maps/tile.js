@@ -62,49 +62,50 @@ class Tile{
     }
 
 
-    getSE(sideBlockCount, latlng){
+    getSE(config, latlng){
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(sideBlockCount / 2) + this.width / 2;
+        var Lat = latlng.getY() - this.noLogoHeight * parseInt(config.sideBlockCount / 2) - this.noLogoHeight / 2;
+        var Lng = latlng.getX() + this.width * parseInt(config.sideBlockCount / 2) + this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
 
-    getSW(sideBlockCount, latlng){
+    getSW(config, latlng){
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(sideBlockCount / 2) - this.width / 2;
+        var Lat = latlng.getY() - this.noLogoHeight * parseInt(config.sideBlockCount / 2) - this.noLogoHeight / 2;
+        var Lng = latlng.getX() - this.width * parseInt(config.sideBlockCount / 2) - this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
 
-    getNE(sideBlockCount, latlng){
+    getNE(config, latlng){
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(sideBlockCount / 2) + this.width / 2;
+        var Lat = latlng.getY() + this.noLogoHeight * parseInt(config.sideBlockCount / 2) + this.noLogoHeight / 2;
+        var Lng = latlng.getX() + this.width * parseInt(config.sideBlockCount / 2) + this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
 
-    getNW(sideBlockCount, latlng){
+    getNW(config, latlng){
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(sideBlockCount / 2) - this.width / 2;
+        var Lat = latlng.getY() + this.noLogoHeight * parseInt(config.sideBlockCount / 2) + this.noLogoHeight / 2;
+        var Lng = latlng.getX() - this.width * parseInt(config.sideBlockCount / 2) - this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
-    draw(centerLatLng, sideBlockCount, naverProfile, callback){
+    draw(centerLatLng, config, naverProfile, callback){
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
+        var sideBlockCount = config.sideBlockCount;
         var canvas = document.createElement("canvas");
         var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
