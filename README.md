@@ -39,10 +39,10 @@ latlng.getY(); // 37.5642135
 - naver 클래스
 ```javascript
 // 반경 1키로 설정
-var config = mapshot.config.Radius.One;
+var radius = mapshot.radius.One;
 
 var naverProfile = new mapshot.profile.Naver();
-naverProfile.setLevel(/*config.zoom*/);
+naverProfile.setLevel(radius);
 naverProfile.setMapType("satellite_base");
 naverProfile.setKey(dev-key);
 ```
@@ -52,13 +52,17 @@ naverProfile.setKey(dev-key);
 // 지도 관련 기능 클래스
 var tile = new mapshot.maps.Tile();
 
-// 중심 좌표로부터 11 x 11 타일로 이루어진 사각형의 남동쪽 좌표 가져오기 
-var seLatLng = tile.getSE(/**/, centerLatLng);
+// 2km 반경 타일의 사각형 남동쪽 좌표 가져오기
+var radius = mapshot.radius.Two; 
+
+var seLatLng = tile.getSE(radius, centerLatLng);
 seLatLng.getX();
 seLatLng.getY();
 
-// 중심 좌표로부터 17 x 17 타일로 이루어진 사각형의 북서쪽 좌표 가져오기
-var nwLatLng = tile.getNW(/**/, centerLatLng);
+// 5km 반경 타일의 사각형 북서쪽 좌표 가져오기
+radius = mapshot.radius.Five; 
+
+var nwLatLng = tile.getNW(radius, centerLatLng);
 // LatLng 클래스 리턴
 
 // 그 외 정의된 함수
@@ -68,9 +72,10 @@ var nwLatLng = tile.getNW(/**/, centerLatLng);
 ```
 - 사용 예시
 ```javascript
+var radius = mapshot.radius.Ten;
 var tile = new mapshot.maps.Tile();
 
-tile.draw(coor, /*mapConfig.sideBlockCount*/, naverProfile, function(canvas){
+tile.draw(coor, radius, naverProfile, function(canvas){
     canvas.toBlob(function (blob) {
         // do something...
     }, "image/jpeg");
