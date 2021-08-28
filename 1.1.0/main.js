@@ -14,7 +14,7 @@ window.addEventListener("load", function(){
             Naver:Naver
         },
 
-        Radius:{
+        radius:{
             One:{
                 sideBlockCount:11,
                 zoom:18,
