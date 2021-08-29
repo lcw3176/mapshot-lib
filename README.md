@@ -62,20 +62,49 @@ seLatLng.getY();
 // 5km 반경 타일의 사각형 북서쪽 좌표 가져오기
 radius = mapshot.radius.Five; 
 
-var nwLatLng = tile.getNW(radius, centerLatLng);
 // LatLng 클래스 리턴
+var nwLatLng = tile.getNW(radius, centerLatLng);
+
+
+
+// tileImageLoadStart 
+// => 파라미터: detail.total, 캡쳐될 전체 사진 갯수
+
+// tileImageOnLoad
+// => 파라미터: 없음
+
+// tileImageOnError
+// => 파라미터: 없음
+
+document.body.addEventListener("tileImageLoadStart", function(e){
+        document.getElementById("progressBar").max = e.detail.total;
+    }
+);
+
+document.body.addEventListener("tileImageOnLoad", function(){
+        document.getElementById("progressBar").value += 1;
+    }
+);
+
 
 // 그 외 정의된 함수
 // tile.getSW();
 // tile.getNE();
 // tile.draw();
 ```
-- 사용 예시
+- 10km 반경 캡쳐 사용 예시
 ```javascript
+var latlng = new mapshot.coors.LatLng(37.5642135, 127.0016985);
 var radius = mapshot.radius.Ten;
-var tile = new mapshot.maps.Tile();
 
-tile.draw(coor, radius, naverProfile, function(canvas){
+var naverProfile = new mapshot.profile.Naver();
+naverProfile.setLevel(radius);
+naverProfile.setMapType("satellite_base");
+naverProfile.setKey(dev-key);
+
+var tile = new mapshot.maps.Tile();
+tile.setLevel(radius);
+tile.draw(latlng, radius, naverProfile, function(canvas){
     canvas.toBlob(function (blob) {
         // do something...
     }, "image/jpeg");
