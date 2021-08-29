@@ -49,6 +49,7 @@ class Tile{
 
 
     getSE(config, latlng){
+        this.setLevel(config);
         this.generate(latlng);
 
         var Lat = latlng.getY() - this.noLogoHeight * parseInt(config.sideBlockCount / 2) - this.noLogoHeight / 2;
@@ -59,6 +60,7 @@ class Tile{
 
 
     getSW(config, latlng){
+        this.setLevel(config);
         this.generate(latlng);
 
         var Lat = latlng.getY() - this.noLogoHeight * parseInt(config.sideBlockCount / 2) - this.noLogoHeight / 2;
@@ -69,6 +71,7 @@ class Tile{
 
 
     getNE(config, latlng){
+        this.setLevel(config);
         this.generate(latlng);
 
         var Lat = latlng.getY() + this.noLogoHeight * parseInt(config.sideBlockCount / 2) + this.noLogoHeight / 2;
@@ -79,6 +82,7 @@ class Tile{
 
 
     getNW(config, latlng){
+        this.setLevel(config);
         this.generate(latlng);
 
         var Lat = latlng.getY() + this.noLogoHeight * parseInt(config.sideBlockCount / 2) + this.noLogoHeight / 2;
@@ -88,6 +92,7 @@ class Tile{
     }
 
     draw(centerLatLng, config, naverProfile, callback){
+        this.setLevel(config);
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
