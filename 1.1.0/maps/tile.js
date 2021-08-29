@@ -7,20 +7,6 @@ class Tile{
         this.noLogoValue;
         this.withLogoValue;
         this.correctFix;
-
-        this.total = 0;
-        this.complete = 0;
-
-        this.tileImageLoadStartEvent = new CustomEvent("tileImageLoadStart",{
-            total:this.total
-        });
-
-        this.tileImageOnLoadEvent = new CustomEvent("tileImageOnLoad",{
-            complete:this.complete
-        });
-        this.tileImageOnErrorEvent = new CustomEvent("tileImageOnError", {
-            complete:this.complete
-        });
     }
 
     generate(latlng){
@@ -31,21 +17,21 @@ class Tile{
         
     }
 
-    setLevel(level){
+    setLevel(config){
 
-        if(level == mapshot.Radius.One.zoom || level == mapshot.Radius.Two.zoom){
+        if(config.zoom == mapshot.radius.One.zoom || config.zoom == mapshot.radius.Two.zoom){
             this.correctFix = 0.00002833;
             this.width = 0.00268;
             this.noLogoValue = 0.002070; 
             this.withLogoValue = 0.00204;
 
-        } else if(level == mapshot.Radius.Five.zoom || level == mapshot.Radius.Ten.zoom){
+        } else if(config.zoom == mapshot.radius.Five.zoom || config.zoom == mapshot.radius.Ten.zoom){
             this.correctFix = 0.00011633;
             this.width = 0.01072;
             this.noLogoValue = 0.00829;
             this.withLogoValue = 0.00817;
         } else{
-            throw "Parameter is not mapshot.Radius Type";
+            throw "Parameter is not mapshot.radius Type";
         }   
     }
 
@@ -113,7 +99,7 @@ class Tile{
         canvas.height = sideBlockCount * (defaultBlockHeight - logoRemover);
 
         var ctx = canvas.getContext("2d");
-        var temp = this.getNW(sideBlockCount, centerLatLng);
+        var temp = this.getNW(config, centerLatLng);
         var startLatLng = new mapshot.coors.LatLng(
             temp.getX() + this.getWidthBetweenBlock() / 2,
             temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
@@ -122,10 +108,21 @@ class Tile{
         var returnXValue = startLatLng.getX();
         var order = 0;
         var isCorner = false;
-        this.total = sideBlockCount * sideBlockCount;
-        this.complete = 0;
+        var total = sideBlockCount * sideBlockCount;
+        var complete = 0;
+        naverProfile.setHeight(1000);
+        
+        var tileImageLoadStartEvent = new CustomEvent("tileImageLoadStart",{
+            detail:{
+                total:total
+            }
+            
+        });
 
-        document.body.dispatchEvent(this.tileImageLoadStartEvent);
+        var tileImageOnLoadEvent = new CustomEvent("tileImageOnLoad");
+        var tileImageOnErrorEvent = new CustomEvent("tileImageOnError");
+
+        document.body.dispatchEvent(tileImageLoadStartEvent);
         for (var i = 0; i < sideBlockCount; i++) {
             for (var j = 0; j < sideBlockCount; j++) {
 
@@ -148,19 +145,19 @@ class Tile{
 
                     _image.onload = function () {
                         ctx.drawImage(_image, 0, 0, _image.width, defaultBlockHeight - logoRemover, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                        this.complete++;
-                        document.body.dispatchEvent(this.tileImageLoadEvent);
+                        complete++;
+                        document.body.dispatchEvent(tileImageOnLoadEvent);
 
-                        if (this.complete == this.total) {
+                        if (complete == total) {
                             callback(canvas);
                         }
                     }
 
                     _image.onerror = function () {
-                        this.complete++;
-                        document.body.dispatchEvent(this.tileImageErrorEvent);
+                        complete++;
+                        document.body.dispatchEvent(tileImageOnErrorEvent);
 
-                        if (this.complete == this.total) {
+                        if (complete == total) {
                             callback(canvas);
                         }
                     }
@@ -168,7 +165,7 @@ class Tile{
                 })(order, image)
 
                 order++;
-                startLatLng.init(startLatLng.getX() + this.getHeightBetweenBlockNoLogo(), startLatLng.getY());
+                startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
 
                 if (isCorner) {
                     naverProfile.setHeight(1000);
