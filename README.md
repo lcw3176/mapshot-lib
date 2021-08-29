@@ -103,7 +103,6 @@ naverProfile.setMapType("satellite_base");
 naverProfile.setKey(dev-key);
 
 var tile = new mapshot.maps.Tile();
-tile.setLevel(radius);
 tile.draw(latlng, radius, naverProfile, function(canvas){
     canvas.toBlob(function (blob) {
         // do something...
