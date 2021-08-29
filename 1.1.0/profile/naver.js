@@ -30,7 +30,7 @@ class Naver{
     getUrl(){
         return "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?"
              + "w=1000"
-             + "&h=" + this.height +
+             + "&h=" + this.height
              + "&center=" +  this.center.getX() + "," + this.center.getY()
              + "&level=" + this.level
              + "&X-NCP-APIGW-API-KEY-ID=" + this.key
