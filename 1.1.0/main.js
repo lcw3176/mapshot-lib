@@ -1,37 +1,32 @@
-var mapshot;
+var mapshot = {
+    maps:{
+        Tile:Tile,
+    },
 
-window.addEventListener("load", function(){
-    mapshot = {
-        maps:{
-            Tile:Tile,
+    coors:{
+        LatLng:LatLng, 
+    },
+
+    profile:{
+        Naver:Naver
+    },
+
+    radius:{
+        One:{
+            sideBlockCount:11,
+            zoom:18,
         },
-
-        coors:{
-            LatLng:LatLng, 
+        Two:{
+            sideBlockCount:17,
+            zoom:18,
         },
-
-        profile:{
-            Naver:Naver
+        Five:{
+            sideBlockCount:11,
+            zoom:16,
         },
-
-        radius:{
-            One:{
-                sideBlockCount:11,
-                zoom:18,
-            },
-            Two:{
-                sideBlockCount:17,
-                zoom:18,
-            },
-            Five:{
-                sideBlockCount:11,
-                zoom:16,
-            },
-            Ten:{
-                sideBlockCount:21,
-                zoom:16,
-            },
-        }
+        Ten:{
+            sideBlockCount:21,
+            zoom:16,
+        },
     }
-    
-});
+};
