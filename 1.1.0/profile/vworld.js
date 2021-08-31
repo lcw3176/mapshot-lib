@@ -1,4 +1,4 @@
-class Naver{
+class Vworld{
     constructor(){
         this.bbox;
     }
