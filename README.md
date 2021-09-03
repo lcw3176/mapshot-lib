@@ -6,7 +6,7 @@
 - [요구사항](#요구사항)
 - [호환성](#호환성)
 - [라이센스](#라이센스)
-- [버전별정보](#버전별정보)
+- [버전정보](#버전정보)
 ## 소개
 Naver Static Map Api를 조금 더 편하게 이용하기 위해 만들어진 라이브러리 입니다. Static Map의 양 옆 타일들의 중심 좌표 계산과, 위도가 내려갈수록 어긋나는 좌표를 보정하는 기능들이 있습니다. 
 ## 설치
@@ -124,7 +124,7 @@ tile.draw(latlng, radius, naverProfile, function(canvas){
 ## 라이센스
 - 이 라이브러리는 [MIT License](https://opensource.org/licenses/MIT)로 배포되었습니다.
 
-## 버전별 정보
+## 버전정보
 ## 1.1.0
 ### coors.NFixLat 클래스 삭제
 기존 좌표 보정 과정이 비효율적이라고 판단하여, 이를 Tile 클래스에 통합하였습니다. NFixLat 클래스는 이제 사용되지 않습니다.
