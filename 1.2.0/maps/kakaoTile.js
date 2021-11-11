@@ -35,8 +35,10 @@ class KakaoTile{
         var kakaoTileOnErrorEvent = new CustomEvent("kakaoTileOnError");
 
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', proxyUrl, true);
+        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
         xhr.responseType = 'arraybuffer';
+        xhr.open('GET', proxyUrl, true);
+        
         
         xhr.onload = function(e) {            
             var blob = new Blob([this.response]);
