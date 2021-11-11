@@ -1,9 +1,9 @@
 class KakaoTile{
     constructor(){
-        this.wakeUpUrl = "https://mapshotproxyserver.herokuapp.com/wakeup";
+        this.percentage = 0;
     }
 
-    wakeUp(onSuccess, onFailed){
+    wakeUp(wakeUpUrl, onSuccess, onFailed){
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === xhr.DONE) {
@@ -15,29 +15,19 @@ class KakaoTile{
             onFailed();
         };
 
-        xhr.open('GET', this.wakeUpUrl);
+        xhr.open('GET', wakeUpUrl);
         xhr.send();
     }
 
     draw(proxyUrl, callback){
-
-        var kakaoTileOnLoadStartEvent = new CustomEvent("kakaoTileOnLoadStart",{
+        var kakaoTileOnProgressEvent = new CustomEvent("kakaoTileOnProgress",{
             detail:{
-                total:total
+                percentage:this.percentage
             }
-            
-        });
-
-        var kakaoTileOnLoadEvent = new CustomEvent("kakaoTileOnLoad",{
-            detail:{
-                total:total
-            }
-            
         });
         
         var kakaoTileOnErrorEvent = new CustomEvent("kakaoTileOnError");
 
-        document.body.dispatchEvent(kakaoTileOnLoadStartEvent);
         var xhr = new XMLHttpRequest();
         xhr.open('GET', proxyUrl, true);
         xhr.responseType = 'arraybuffer';
@@ -48,12 +38,12 @@ class KakaoTile{
         };
 
         xhr.onprogress = function(e) {
-            img.completedPercentage = parseInt((e.loaded / e.total) * 100);
-
+            this.percentage = parseInt((e.loaded / e.total) * 100);
+            document.body.dispatchEvent(kakaoTileOnProgressEvent);
         };
 
         xhr.onerror = function(){
-           
+            document.body.dispatchEvent(kakaoTileOnErrorEvent);
         }
 
         xhr.send();
