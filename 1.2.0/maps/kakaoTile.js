@@ -1,8 +1,4 @@
 class KakaoTile{
-    constructor(){
-        this.percentage = 0;
-    }
-
     wakeUp(wakeUpUrl, callback){
         var kakaoTileOnErrorEvent = new CustomEvent("kakaoTileOnError");
 
@@ -28,7 +24,7 @@ class KakaoTile{
     draw(proxyUrl, callback){
         var kakaoTileOnProgressEvent = new CustomEvent("kakaoTileOnProgress",{
             detail:{
-                percentage:this.percentage
+                percentage:0
             }
         });
         
@@ -46,7 +42,7 @@ class KakaoTile{
         };
 
         xhr.onprogress = function(e) {
-            this.percentage = parseInt((e.loaded / e.total) * 100);
+            kakaoTileOnProgressEvent.detail.percentage =  parseInt((e.loaded / e.total) * 100);
             document.body.dispatchEvent(kakaoTileOnProgressEvent);
         };
 
