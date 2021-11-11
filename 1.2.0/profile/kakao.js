@@ -23,7 +23,7 @@ class Kakao{
     }
 
     getUrl(){
-        var queryString = "lat=" + this.center.getY() + 
+        var queryString = "?lat=" + this.center.getY() + 
                           "&lng=" + this.center.getX() + 
                           "&level=" + this.level + 
                           "&type=" + this.mapType;
