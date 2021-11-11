@@ -11,11 +11,14 @@ class KakaoTile{
             if (xhr.readyState === xhr.DONE) {
                 if (xhr.status === 200 || xhr.status === 201) {
                     callback();
-                    return;
+                }
+
+                else{
+                    document.body.dispatchEvent(kakaoTileOnErrorEvent);
                 }
             }
 
-            document.body.dispatchEvent(kakaoTileOnErrorEvent);
+            
         };
 
         xhr.open('GET', wakeUpUrl);
