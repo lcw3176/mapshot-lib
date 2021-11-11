@@ -3,16 +3,19 @@ class KakaoTile{
         this.percentage = 0;
     }
 
-    wakeUp(wakeUpUrl, onSuccess, onFailed){
+    wakeUp(wakeUpUrl, callback){
+        var kakaoTileOnErrorEvent = new CustomEvent("kakaoTileOnError");
+
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === xhr.DONE) {
                 if (xhr.status === 200 || xhr.status === 201) {
-                    onSuccess();
+                    callback();
+                    return;
                 }
             }
 
-            onFailed();
+            document.body.dispatchEvent(kakaoTileOnErrorEvent);
         };
 
         xhr.open('GET', wakeUpUrl);
