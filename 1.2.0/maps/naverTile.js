@@ -91,12 +91,12 @@ class NaverTile{
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
-    draw(centerLatLng, config, naverProfile, callback){
-        this.setLevel(config);
+    draw(centerLatLng, radiusConfig, naverProfile, callback){
+        this.setLevel(radiusConfig);
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
-        var sideBlockCount = config.sideBlockCount;
+        var sideBlockCount = radiusConfig.sideBlockCount;
         var canvas = document.createElement("canvas");
         var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
@@ -104,7 +104,7 @@ class NaverTile{
         canvas.height = sideBlockCount * (defaultBlockHeight - logoRemover);
 
         var ctx = canvas.getContext("2d");
-        var temp = this.getNW(config, centerLatLng);
+        var temp = this.getNW(radiusConfig, centerLatLng);
         var startLatLng = new mapshot.coors.LatLng(
             temp.getX() + this.getWidthBetweenBlock() / 2,
             temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
@@ -124,7 +124,7 @@ class NaverTile{
             
         });
 
-        var naverTileOnLoadEvent = new CustomEvent("naverTileOnLoad");
+        var naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
         var naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
 
         document.body.dispatchEvent(naverTileOnLoadStartEvent);
@@ -151,7 +151,7 @@ class NaverTile{
                     _image.onload = function () {
                         ctx.drawImage(_image, 0, 0, _image.width, defaultBlockHeight - logoRemover, xPos, yPos, canvasBlockSize, canvasBlockSize);
                         complete++;
-                        document.body.dispatchEvent(naverTileOnLoadEvent);
+                        document.body.dispatchEvent(naverTileOnProgressEvent);
 
                         if (complete == total) {
                             callback(canvas);
