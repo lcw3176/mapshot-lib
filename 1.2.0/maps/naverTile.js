@@ -91,7 +91,7 @@ class NaverTile{
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
-    draw(centerLatLng, radiusConfig, naverProfile, callback){
+    draw(centerLatLng, radiusConfig, naverProfile, onSuccess){
         this.setLevel(radiusConfig);
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
@@ -154,7 +154,7 @@ class NaverTile{
                         document.body.dispatchEvent(naverTileOnProgressEvent);
 
                         if (complete == total) {
-                            callback(canvas);
+                            onSuccess(canvas);
                         }
                     }
 
@@ -163,7 +163,7 @@ class NaverTile{
                         document.body.dispatchEvent(naverTileOnErrorEvent);
 
                         if (complete == total) {
-                            callback(canvas);
+                            onSuccess(canvas);
                         }
                     }
 

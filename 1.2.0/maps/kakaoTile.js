@@ -1,12 +1,12 @@
 class KakaoTile{
-    wakeUp(wakeUpUrl, callback){
+    wakeUp(wakeUpUrl, onSuccess){
         var kakaoTileOnErrorEvent = new CustomEvent("kakaoTileOnError");
 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === xhr.DONE) {
                 if (xhr.status === 200 || xhr.status === 201) {
-                    callback();
+                    onSuccess();
                 }
 
                 else{
@@ -21,7 +21,7 @@ class KakaoTile{
         xhr.send();
     }
 
-    draw(proxyUrl, callback){
+    draw(proxyUrl, onSuccess){
         var kakaoTileOnProgressEvent = new CustomEvent("kakaoTileOnProgress",{
             detail:{
                 percentage:0
@@ -38,7 +38,7 @@ class KakaoTile{
         
         xhr.onload = function(e) {            
             var blob = new Blob([this.response]);
-            callback(blob);
+            onSuccess(blob);
         };
 
         xhr.onprogress = function(e) {
