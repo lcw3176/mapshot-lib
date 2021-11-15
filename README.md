@@ -440,7 +440,7 @@ document.body.addEventListener("kakaoTileOnError", function(){
 ## 요구사항
 - Naver Static Map API
 - Kakao Maps API
-- 개인 프록시 서버
+- 개인 서버
 
 ## 호환성
 |브라우저|동작|테스트 환경|비고|
