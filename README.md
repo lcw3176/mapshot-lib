@@ -369,26 +369,20 @@ radius = mapshot.radius.Five;
 // LatLng 클래스 리턴
 var nwLatLng = tile.getNW(radius, centerLatLng);
 
-
-
-// tileImageLoadStart 
-// => 파라미터: detail.total, 캡쳐될 전체 사진 갯수
-
-// tileImageOnLoad
-// => 파라미터: 없음
-
-// tileImageOnError
-// => 파라미터: 없음
-
-document.body.addEventListener("tileImageLoadStart", function(e){
+// 이벤트 사용
+document.body.addEventListener("naverTileOnLoadStart", function(e){
         document.getElementById("progressBar").max = e.detail.total;
     }
 );
 
-document.body.addEventListener("tileImageOnLoad", function(){
+document.body.addEventListener("naverTileOnProgress", function(){
         document.getElementById("progressBar").value += 1;
     }
 );
+
+document.body.addEventListener("naverTileOnError", function(){
+    alert("에러 발생");
+});
 ```
 - 10km 반경 캡쳐 사용 예시
 
@@ -430,6 +424,15 @@ tile.wakeUp("personalServerUrl", function(){
     tile.draw("personalServerUrl", function(blob){
         // do something...
     });
+});
+
+// 이벤트 사용
+document.body.addEventListener("kakaoTileOnProgress", function(e){
+    document.getElementById("progressBar").value = e.detail.percentage;
+});
+
+document.body.addEventListener("kakaoTileOnError", function(){
+    alert("에러 발생");
 });
 
 ```
