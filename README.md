@@ -206,6 +206,31 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
     - type: 콜백함수를 통한 canvas 전달
     - value: canvas
 
+### naverTileOnLoadStart (Event)
+- 용도
+    - canvas에 이미지를 받아오기 전, 총 몇장의 사진을 수집할 예정인지 알려줍니다
+- parameter
+    - 없음
+- return value
+    - type: detail.total (number)
+    - value: 총 수집할 사진 갯수
+
+### naverTileOnProgress (Event)
+- 용도
+    - 사진이 수집될때 마다 발생하는 이벤트입니다.
+- parameter
+    - 없음
+- return value
+    - 없음
+
+### naverTileOnError (Event)
+- 용도
+    - 사진 수집에 실패할 때 마다 발생하는 이벤트입니다.
+- parameter
+    - 없음
+- return value
+    - 없음
+    
 </details> 
 <br>
 
@@ -270,6 +295,23 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
 - return value
     - type: 콜백함수를 통한 blob 전달
     - value: Image blob
+
+### kakaoTileOnProgress (Event)
+- 용도
+    - 서버에서 이미지를 받아오는 진행상황을 알려줍니다.
+- parameter
+    - 없음
+- return value
+    - type: detail.percentage (number)
+    - value: 전송 진행상황을 나타냅니다. max:100
+
+### kakaoTileOnError (Event)
+- 용도
+    - 서버에서 이미지를 받아오는 중 에러 발생을 알려줍니다.
+- parameter
+    - 없음
+- return value
+    - 없음
 
 </details>
 <br>
