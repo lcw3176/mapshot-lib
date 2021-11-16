@@ -543,9 +543,13 @@ tile.draw(latlng, radius, naverProfile, function(canvas){
 <summary>1.2.0</summary>
 
 ## 1.2.0
-### KakaoTile 클래스 추가
+### Tile -> NaverTile로 변경
+캡쳐 기능이 분화됨에 따라서, 타일의 종류도 나뉘게 되었습니다.
+### KakaoTile, kakao profile 클래스 추가
+카카오 지도를 사용하게 됨에 따라 KakaoTile, profile 클래스가 추가되었습니다.
+### 이벤트명 변경
+tile 클래스가 나뉘면서, 이벤트 이름도 보다 세분화되었습니다.
 
-### 코드 비교
 
 </details>
 
