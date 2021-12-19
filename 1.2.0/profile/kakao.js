@@ -31,14 +31,4 @@ class Kakao{
         return this.proxyUrl + queryString;
     }
 
-    getDataToJson(){
-        var jsonData = {
-            lat:this.center.getY(),
-            lng:this.center.getX(),
-            level:this.level,
-            type:this.mapType
-        }
-
-        return jsonData;
-    }
 }
