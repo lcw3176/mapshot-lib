@@ -554,3 +554,15 @@ tile 클래스가 나뉘면서, 이벤트 이름도 보다 세분화되었습니
 </details>
 
 
+<details>
+<summary>1.3.0</summary>
+
+## 1.3.0
+### kakaoTile.draw() -> kakaoTile.drawGet(), kakaoTile.drawPost() 로 세분화
+구축한 서버 상태에 맞게 사용하기 편하도록 수정되었습니다. 
+### profile.Kakao.getDataToJson() 함수 추가
+POST 요청에 맞게, 필요한 매개변수들을 JSON으로 반환합니다
+
+</details>
+
+
