@@ -21,7 +21,7 @@ class KakaoTile{
         xhr.send();
     }
 
-    drawGet(proxyUrl, onSuccess){
+    drawGet(kakaoProfile, onSuccess){
         var kakaoTileOnProgressEvent = new CustomEvent("kakaoTileOnProgress",{
             detail:{
                 percentage:0
@@ -31,7 +31,7 @@ class KakaoTile{
         var kakaoTileOnErrorEvent = new CustomEvent("kakaoTileOnError");
 
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', proxyUrl, true);
+        xhr.open('GET', kakaoProfile.getUrlWithParams(), true);
 
         xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
         xhr.responseType = 'arraybuffer';
@@ -53,7 +53,7 @@ class KakaoTile{
         xhr.send();
     }
 
-    drawPost(proxyUrl, jsonData, onSuccess){
+    drawPost(kakaoProfile, onSuccess){
         var kakaoTileOnProgressEvent = new CustomEvent("kakaoTileOnProgress",{
             detail:{
                 percentage:0
@@ -63,7 +63,7 @@ class KakaoTile{
         var kakaoTileOnErrorEvent = new CustomEvent("kakaoTileOnError");
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', proxyUrl, true);
+        xhr.open('POST', kakaoProfile.getProxyUrl(), true);
 
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
@@ -83,6 +83,6 @@ class KakaoTile{
             document.body.dispatchEvent(kakaoTileOnErrorEvent);
         }
 
-        xhr.send(jsonData);
+        xhr.send(kakaoProfile.getParamsToJson());
     }
 }
