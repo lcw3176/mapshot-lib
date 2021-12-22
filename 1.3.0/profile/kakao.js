@@ -22,7 +22,11 @@ class Kakao{
         this.proxyUrl = proxyUrl;
     }
 
-    getUrl(){
+    getProxyUrl(){
+        return this.proxyUrl;
+    }
+
+    getUrlWithParams(){
         var queryString = "?lat=" + this.center.getY() + 
                           "&lng=" + this.center.getX() + 
                           "&level=" + this.level + 
@@ -31,7 +35,7 @@ class Kakao{
         return this.proxyUrl + queryString;
     }
 
-    getDataToJson(){
+    getParamsToJson(){
         var jsonData = {
             lat:this.center.getY(),
             lng:this.center.getX(),
