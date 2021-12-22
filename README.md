@@ -286,11 +286,21 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
 - return value
     - 없음
 
-### draw (string proxyUrl, function onSuccessCallback)
+### drawGet (mapshot.profile.Kakao kakaoProfile, function onSuccessCallback)
 - 용도
-    - 서버에서 지도 이미지를 받아오는 함수입니다.
+    - 서버에서 지도 이미지를 받아오는 함수입니다. GET 방식으로 접근합니다.
 - parameter
-    - proxyUrl: 지도 생성에 해당하는 url입니다.
+    - kakaoProfile: 서버 정보가 존재하는 프로파일입니다.
+    - onSuccessCallback: 성공적인 응답시 실행되는 콜백함수 입니다.
+- return value
+    - type: 콜백함수를 통한 blob 전달
+    - value: Image blob
+
+### drawPost (mapshot.profile.Kakao kakaoProfile, function onSuccessCallback)
+- 용도
+    - 서버에서 지도 이미지를 받아오는 함수입니다. POST 방식으로 접근합니다.
+- parameter
+    - kakaoProfile: 서버 정보가 존재하는 프로파일입니다.
     - onSuccessCallback: 성공적인 응답시 실행되는 콜백함수 입니다.
 - return value
     - type: 콜백함수를 통한 blob 전달
@@ -560,8 +570,6 @@ tile 클래스가 나뉘면서, 이벤트 이름도 보다 세분화되었습니
 ## 1.3.0
 ### kakaoTile.draw() -> kakaoTile.drawGet(), kakaoTile.drawPost() 로 세분화
 구축한 서버 상태에 맞게 사용하기 편하도록 수정되었습니다. 
-### profile.Kakao.getDataToJson() 함수 추가
-POST 요청에 맞게, 필요한 매개변수들을 JSON으로 반환합니다
 
 </details>
 
