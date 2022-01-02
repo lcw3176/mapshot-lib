@@ -4,6 +4,15 @@ class Kakao{
         this.level;
         this.mapType;
         this.proxyUrl;
+        this.layerMode = false;
+    }
+
+    setLayerMode(mode){
+        this.layerMode = mode;
+    }
+
+    isLayerMode(){
+        return this.layerMode;
     }
 
     setLevel(level){
@@ -37,6 +46,7 @@ class Kakao{
 
     getParamsToJson(){
         var jsonData = {
+            layerMode:this.layerMode,
             lat:this.center.getY(),
             lng:this.center.getX(),
             level:this.level,
