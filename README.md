@@ -247,6 +247,24 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
 - return value
     - 없음
 
+### setLayerMode (boolean mode)
+- 용도
+    - 지적편집도 여부를 설정합니다.
+- parameter
+    - true: 지적 편집도를 덧입힙니다
+    - false: 지적 편집도를 입히지 않습니다
+- return value
+    - 없음
+
+### isLayerMode()
+- 용도
+    - 지적편집도 여부를 가져옵니다. 기본 설정값은 false입니다.
+- parameter
+    - 없음
+- return value
+    - type: boolean
+    - value: true or false
+
 ### setMapType (string type)
 - 용도
     - 지도 종류를 설정합니다.
@@ -305,6 +323,17 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
 - return value
     - type: 콜백함수를 통한 blob 전달
     - value: Image blob
+
+### wait (string waitUrl, string onSucessResponseText, number repeatMilliSeconds, funcion onSuccessCallback)
+- 용도
+    - 서버에 지도 요청이 가능한지 확인하는 함수입니다. GET 방식으로 접근하며, 서버의 응답이 onSucessResponseText와 같은 응답이 올 때 까지 repeatMilliSeconds의 간격으로 반복해서 요청을 보냅니다.
+- parameter
+    - waitUrl: 요청을 보내는 url 입니다.
+    - onSucessResponseText: 서버가 사용 가능한 시점(지도 생성이 가능한 시점)에 리턴되는 텍스트 값입니다. 이 값과 서버의 응답 값이 일치하면 콜백이 실행됩니다.
+    - repeatMilliSeconds: 서버의 사용 가능 여부를 주기적으로 체크할 간격입니다. onSucessResponseText와 응답값이 같을 때 까지 이 간격으로 요청을 보냅니다.
+    - onSuccessCallback: 지도 생성이 가능한 시점에 생성되는 콜백함수 입니다.
+- return value
+    - 없음
 
 ### kakaoTileOnProgress (Event)
 - 용도
@@ -429,9 +458,19 @@ profile.setProxyUrl("personalServerUrl");
 - mapshot.maps.KakaoTile
 ```javascript
 var tile = new mapshot.maps.KakaoTile();
+var profile = new mapshot.profile.Kakao();
 
+// GET 방식 호출
 tile.wakeUp("personalServerUrl", function(){
-    tile.draw("personalServerUrl", function(blob){
+    tile.drawGet(profile, function(blob){
+        // do something...
+    });
+});
+
+
+// POST 방식 호출
+tile.wait("personalServerUrl", "serverAvailable!", 2000, function(){
+    tile.drawPost(profile, function(blob){
         // do something...
     });
 });
@@ -570,6 +609,18 @@ tile 클래스가 나뉘면서, 이벤트 이름도 보다 세분화되었습니
 ## 1.3.0
 ### kakaoTile.draw() -> kakaoTile.drawGet(), kakaoTile.drawPost() 로 세분화
 구축한 서버 상태에 맞게 사용하기 편하도록 수정되었습니다. 
+
+</details>
+
+
+
+
+<details>
+<summary>1.4.0</summary>
+
+## 1.4.0
+### kakaoTile.wait() 추가
+서버가 사용 가능한지 체크하는 기능이 추가되었습니다.
 
 </details>
 
