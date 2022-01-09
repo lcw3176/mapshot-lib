@@ -101,7 +101,7 @@ class NaverTile{
         var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
         canvas.width = sideBlockCount * canvasBlockSize;
-        canvas.height = sideBlockCount * (defaultBlockHeight - logoRemover);
+        canvas.height = sideBlockCount * canvasBlockSize;
 
         var ctx = canvas.getContext("2d");
         var temp = this.getNW(radiusConfig, centerLatLng);
