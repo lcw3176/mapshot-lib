@@ -505,7 +505,7 @@ document.body.addEventListener("kakaoTileOnError", function(){
 
 ## 버전정보
 <details>
-<summary>1.1.0</summary>
+<summary>1.1.x</summary>
 
 ## 1.1.0
 ### coors.NFixLat 클래스 삭제
@@ -589,7 +589,7 @@ tile.draw(latlng, radius, naverProfile, function(canvas){
 </details>
 
 <details>
-<summary>1.2.0</summary>
+<summary>1.2.x</summary>
 
 ## 1.2.0
 ### Tile -> NaverTile로 변경
@@ -604,7 +604,7 @@ tile 클래스가 나뉘면서, 이벤트 이름도 보다 세분화되었습니
 
 
 <details>
-<summary>1.3.0</summary>
+<summary>1.3.x</summary>
 
 ## 1.3.0
 ### kakaoTile.draw() -> kakaoTile.drawGet(), kakaoTile.drawPost() 로 세분화
@@ -616,7 +616,7 @@ tile 클래스가 나뉘면서, 이벤트 이름도 보다 세분화되었습니
 
 
 <details>
-<summary>1.4.0</summary>
+<summary>1.4.x</summary>
 
 ## 1.4.0
 ### kakaoTile.wait() 추가
