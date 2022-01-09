@@ -87,7 +87,7 @@ class KakaoTile{
     }
 
 
-    wait(waitUrl, onSucessResponseText, repeatMilliSeconds, onSuccess){
+    wait(waitUrl, onSucessResponseText, repeatMilliSeconds, onWait, onSuccess){
         var xhr = new XMLHttpRequest();
 
         xhr.onreadystatechange = function() {
@@ -95,6 +95,8 @@ class KakaoTile{
                 if(xhr.responseText == onSucessResponseText){
                     onSuccess();
                 } else {
+                    onWait();
+                    
                     setTimeout(function(){
                         xhr.open('GET', waitUrl, true);
                         xhr.send(null)
