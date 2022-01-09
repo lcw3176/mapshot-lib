@@ -1,0 +1,30 @@
+{
+  "name": "mapshot-lib",
+  "version": "1.0.0",
+  "description": "- [소개](#소개)\r - [설치](#설치)\r - [문서](#문서)\r - [사용법](#사용법)\r - [요구사항](#요구사항)\r - [호환성](#호환성)\r - [라이센스](#라이센스)\r - [버전정보](#버전정보)\r ## 소개\r Naver Static Map Api를 조금 더 편하게 이용하기 위해 만들어진 라이브러리 입니다. Static Map의 양 옆 타일들의 중심 좌표 계산과, 위도가 내려갈수록 어긋나는 좌표를 보정하는 기능들이 있습니다. \r 이 라이브러리는 [Mapshot](https://mapshot.netlify.app) 운영에 사용되고 있으며, 특정 기능은 직접 서버를 구축해야 사용 가능합니다.",
+  "main": "mapshot.latest.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel ./1.4.1/*/*.js -o ./1.4.1/mapshot.out.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lcw3176/mapshot-lib.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lcw3176/mapshot-lib/issues"
+  },
+  "homepage": "https://github.com/lcw3176/mapshot-lib#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  },
+  "dependencies": {
+    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
+    "babel-preset-env": "^1.7.0",
+    "concat": "^1.0.3"
+  }
+}
