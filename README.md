@@ -324,13 +324,14 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"><
     - type: 콜백함수를 통한 blob 전달
     - value: Image blob
 
-### wait (string waitUrl, string onSucessResponseText, number repeatMilliSeconds, funcion onSuccessCallback)
+### wait (string waitUrl, string onSucessResponseText, number repeatMilliSeconds, function onWait, funcion onSuccessCallback)
 - 용도
     - 서버에 지도 요청이 가능한지 확인하는 함수입니다. GET 방식으로 접근하며, 서버의 응답이 onSucessResponseText와 같은 응답이 올 때 까지 repeatMilliSeconds의 간격으로 반복해서 요청을 보냅니다.
 - parameter
     - waitUrl: 요청을 보내는 url 입니다.
     - onSucessResponseText: 서버가 사용 가능한 시점(지도 생성이 가능한 시점)에 리턴되는 텍스트 값입니다. 이 값과 서버의 응답 값이 일치하면 콜백이 실행됩니다.
     - repeatMilliSeconds: 서버의 사용 가능 여부를 주기적으로 체크할 간격입니다. onSucessResponseText와 응답값이 같을 때 까지 이 간격으로 요청을 보냅니다.
+    - onWait: 지도 생성이 가능한 시점이 아니라면 실행되는 콜백함수 입니다.
     - onSuccessCallback: 지도 생성이 가능한 시점에 생성되는 콜백함수 입니다.
 - return value
     - 없음
@@ -469,7 +470,17 @@ tile.wakeUp("personalServerUrl", function(){
 
 
 // POST 방식 호출
-tile.wait("personalServerUrl", "serverAvailable!", 2000, function(){
+var counter = 0;
+
+function onWait(){
+    counter++;
+
+    if(counter >= 10){
+        console.log("사용자가 많아 대기중입니다...");
+    }
+}
+
+tile.wait("personalServerUrl", "serverAvailable!", 2000, onWait, function(){
     tile.drawPost(profile, function(blob){
         // do something...
     });
