@@ -16,13 +16,13 @@ Naver Static Map Api를 조금 더 편하게 이용하기 위해 만들어진 �
 1. 다운로드
 - 라이브러리 다운로드 후 각자 폴더 구조에 맞게 사용하시면 됩니다.
 ```html
-<script type="text/javascript" src="../1.0.0/mapshot.min.js"></script>
+<script type="text/javascript" src="../1.4.1/mapshot.min.js"></script>
 ```
 
 2. CDN 이용
 ```html
 <script type="text/javascript" 
-src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/mapshot.latest.js"></script>
+src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/1.4.1/mapshot.min.js"></script>
 ```
 
 ## 문서
