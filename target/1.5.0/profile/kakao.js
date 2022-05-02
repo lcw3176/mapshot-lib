@@ -5,6 +5,7 @@ class Kakao{
         this.mapType;
         this.proxyUrl;
         this.layerMode = false;
+        this.companyType = "KAKAO";
     }
 
     setLayerMode(mode){
@@ -50,9 +51,21 @@ class Kakao{
             lat:this.center.getY(),
             lng:this.center.getX(),
             level:this.level,
-            type:this.mapType
+            type:this.mapType,
+            companyType:this.companyType
         }
 
         return JSON.stringify(jsonData);
     }
+
+    getQueryString(){
+        return "?lat=" + this.center.getY() + 
+                "&lng=" + this.center.getX() + 
+                "&level=" + this.level + 
+                "&type=" + this.mapType + 
+                "&layerMode=" + this.layerMode + 
+                "&companyType=" + this.companyType;
+        
+    }
+
 }
