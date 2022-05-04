@@ -507,7 +507,7 @@ document.body.addEventListener("kakaoTileOnError", function(){
 |----|----|----|---|
 |Google Chrome|O|Desktop, Mobile||
 |Microsoft Edge|O|Desktop||
-|Internet Explorer|△|Desktop|ie 10 미만 테스트 안해봄|
+|Internet Explorer|△|Desktop|ie 10 미만 작동 x|
 |FireFox|O|Desktop||
 |Brave Browser|O|Desktop||
 
