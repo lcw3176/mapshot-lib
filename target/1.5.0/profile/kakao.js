@@ -36,13 +36,8 @@ class Kakao{
         return this.proxyUrl;
     }
 
-    getUrlWithParams(){
-        var queryString = "?lat=" + this.center.getY() + 
-                          "&lng=" + this.center.getX() + 
-                          "&level=" + this.level + 
-                          "&type=" + this.mapType;
-        
-        return this.proxyUrl + queryString;
+    getUrlWithParams(){        
+        return this.proxyUrl + this.getQueryString();
     }
 
     getParamsToJson(){

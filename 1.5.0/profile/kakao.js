@@ -37,7 +37,7 @@ class Kakao{
     }
 
     getUrlWithParams(){
-        return this.proxyUrl + getQueryString();
+        return this.proxyUrl + this.getQueryString();
     }
 
     getParamsToJson(){
