@@ -1,11 +1,11 @@
-class Kakao{
+class Proxy{
     constructor(){
         this.center;
         this.level;
         this.mapType;
         this.proxyUrl;
         this.layerMode = false;
-        this.companyType = "KAKAO";
+        this.companyType;
     }
 
     setLayerMode(mode){
@@ -32,11 +32,17 @@ class Kakao{
         this.proxyUrl = proxyUrl;
     }
 
+
+    setCompanyType(companyType){
+        this.companyType = companyType;
+    }
+
+
     getProxyUrl(){
         return this.proxyUrl;
     }
 
-    getUrlWithParams(){        
+    getUrlWithParams(){
         return this.proxyUrl + this.getQueryString();
     }
 

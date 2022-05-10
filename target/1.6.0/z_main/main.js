@@ -20,7 +20,7 @@
 var mapshot = {
     maps:{
         NaverTile:NaverTile,
-        KakaoTile:KakaoTile,
+        ProxyTile:ProxyTile,
     },
 
     coors:{
@@ -29,7 +29,7 @@ var mapshot = {
 
     profile:{
         Naver:Naver,
-        Kakao:Kakao,
+        Proxy:Proxy,
     },
 
     radius:{
