@@ -173,3 +173,33 @@ tile 클래스가 나뉘면서, 이벤트 이름도 보다 세분화되었습니
 </details>
 
 
+<details>
+<summary>1.5.x</summary>
+
+## 1.5.0
+### kakaoTile.requestImage() 추가
+uuid를 통해 이미지를 발급하는 기능이 추가되었습니다.
+
+</details>
+
+
+<details>
+<summary>1.6.x</summary>
+
+## 1.6.0
+### kakaoTile -> proxyTile, kakaoProfile -> proxyProfile 로 변경
+proxy Server로 받아오는 이미지들이 세분화됨에 따라,
+특정 회사명이 아니라 조금 더 추상화된 이름으로 변경되었습니다.
+
+### 기존 메소드 간소화
+- 사라진 메소드
+    - drawGet()
+    - wakeUp()
+    - drawPost()
+    - wait()
+
+- 유지된 메소드
+    - requestImage()
+</details>
+
+
