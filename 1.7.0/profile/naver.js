@@ -15,8 +15,8 @@ class Naver{
         this.center = param;
     }
 
-    setLevel(config){
-        this.level = config.zoom;
+    setLevel(radius){
+        this.level = radius.Naver.zoom;
     }
 
     setKey(param){

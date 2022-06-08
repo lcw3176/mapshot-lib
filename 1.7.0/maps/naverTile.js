@@ -17,15 +17,15 @@ class NaverTile{
         
     }
 
-    setLevel(config){
+    setLevel(radius){
 
-        if(config.zoom == mapshot.radius.One.zoom || config.zoom == mapshot.radius.Two.zoom){
+        if(radius.Naver.zoom == mapshot.radius.One.Naver.zoom || radius.Naver.zoom == mapshot.radius.Two.Naver.zoom){
             this.correctFix = 0.00002833;
             this.width = 0.00268;
             this.noLogoValue = 0.002070; 
             this.withLogoValue = 0.00204;
 
-        } else if(config.zoom == mapshot.radius.Five.zoom || config.zoom == mapshot.radius.Ten.zoom){
+        } else if(radius.Naver.zoom == mapshot.radius.Five.Naver.zoom || radius.Naver.zoom == mapshot.radius.Ten.Naver.zoom){
             this.correctFix = 0.00011633;
             this.width = 0.01072;
             this.noLogoValue = 0.00829;
@@ -48,51 +48,51 @@ class NaverTile{
     }
 
 
-    getSE(config, latlng){
-        this.setLevel(config);
+    getSE(radius, latlng){
+        this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(config.sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(config.sideBlockCount / 2) + this.width / 2;
+        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) - this.noLogoHeight / 2;
+        var Lng = latlng.getX() + this.width * parseInt(radius.Naver.sideBlockCount / 2) + this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
 
-    getSW(config, latlng){
-        this.setLevel(config);
+    getSW(radius, latlng){
+        this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(config.sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(config.sideBlockCount / 2) - this.width / 2;
+        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) - this.noLogoHeight / 2;
+        var Lng = latlng.getX() - this.width * parseInt(radius.Naver.sideBlockCount / 2) - this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
 
-    getNE(config, latlng){
-        this.setLevel(config);
+    getNE(radius, latlng){
+        this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(config.sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(config.sideBlockCount / 2) + this.width / 2;
+        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) + this.noLogoHeight / 2;
+        var Lng = latlng.getX() + this.width * parseInt(radius.Naver.sideBlockCount / 2) + this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
 
-    getNW(config, latlng){
-        this.setLevel(config);
+    getNW(radius, latlng){
+        this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(config.sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(config.sideBlockCount / 2) - this.width / 2;
+        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) + this.noLogoHeight / 2;
+        var Lng = latlng.getX() - this.width * parseInt(radius.Naver.sideBlockCount / 2) - this.width / 2;
 
         return new mapshot.coors.LatLng(Lat, Lng);
     }
 
     draw(centerLatLng, radiusConfig, naverProfile, onSuccess){
-        this.setLevel(radiusConfig.Naver);
+        this.setLevel(radiusConfig);
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
@@ -104,7 +104,7 @@ class NaverTile{
         canvas.height = sideBlockCount * canvasBlockSize;
 
         var ctx = canvas.getContext("2d");
-        var temp = this.getNW(radiusConfig.Naver, centerLatLng);
+        var temp = this.getNW(radiusConfig, centerLatLng);
         var startLatLng = new mapshot.coors.LatLng(
             temp.getX() + this.getWidthBetweenBlock() / 2,
             temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
