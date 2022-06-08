@@ -31,6 +31,7 @@ var mapshot = {
         Naver:Naver,
         Proxy:Proxy,
     },
+    // 구글 지도는 계산상 편의를 위해 실제 크기보다 width가 500px 크게 기재되어 있음.
 
     radius:{
         One:{
@@ -44,7 +45,7 @@ var mapshot = {
             },
             Google:{
                 level:1,
-                width:5500,
+                width:6000,
             }
             
         },
@@ -59,7 +60,7 @@ var mapshot = {
             },
             Google:{
                 level:2,
-                width:4500,
+                width:5000,
             }
            
         },
@@ -74,7 +75,7 @@ var mapshot = {
             },
             Google:{
                 level:5,
-                width:5500,
+                width:6000,
             }
             
         },
@@ -89,7 +90,7 @@ var mapshot = {
             },
             Google:{
                 level:10,
-                width:5500,
+                width:6000,
             }
             
         },
