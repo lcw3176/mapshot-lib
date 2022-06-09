@@ -203,3 +203,11 @@ proxy Server로 받아오는 이미지들이 세분화됨에 따라,
 </details>
 
 
+<details>
+<summary>1.7.x</summary>
+
+## 1.7.0
+### 반경 설정 세분화
+</details>
+
+
