@@ -208,6 +208,12 @@ proxy Server로 받아오는 이미지들이 세분화됨에 따라,
 
 ## 1.7.0
 ### 반경 설정 세분화
+radius 설정이 세분화 되었습니다. mapshot.radius.{반경}.{회사명}과 같은 형식으로 지정해 줘야 합니다.
+ex) mapshot.radius.One.Naver
+
+### proxyTile 이미지 요청 방식 변경
+proxyTile의 이미지 요청 방식이 변경되었습니다. 
+기존의 XMLHttpRequest 방식에서 Image 클래스를 이용한 방식으로 변경되었습니다. 
 </details>
 
 
