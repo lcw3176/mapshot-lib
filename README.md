@@ -26,10 +26,10 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/1.4.1/mapshot.min.js
 ```
 
 ## 문서
-- [Document](https://github.com/lcw3176/mapshot-lib/wiki/Document)
+- [Document](https://github.com/lcw3176/mapshot-lib/wiki/Document-(ver-1.7.x-~-))
 
 ## 사용법
-- [Usage_Example](https://github.com/lcw3176/mapshot-lib/wiki/Usage-Example)
+- [Usage_Example](https://github.com/lcw3176/mapshot-lib/wiki/Usage-Example-(-ver-1.7.x-~--))
 
 ## 요구사항
 - 필수
