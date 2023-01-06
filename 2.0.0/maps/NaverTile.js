@@ -106,7 +106,7 @@ export class NaverTile {
 
         var ctx = canvas.getContext("2d");
         var temp = this.getNW(radiusConfig, centerLatLng);
-        var startLatLng = new mapshot.coors.LatLng(
+        var startLatLng = new LatLng(
             temp.getX() + this.getWidthBetweenBlock() / 2,
             temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
         );
