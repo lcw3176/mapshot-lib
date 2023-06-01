@@ -184,4 +184,122 @@ export class NaverTile {
             startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
         }
     }
+
+    async drawLayers(centerLatLng, radiusConfig, layerProfile, canvas, onSuccess) {
+        this.setLevel(radiusConfig);
+        const defaultBlockHeight = 1000;
+        // const logoRemover = 27;
+
+      
+
+        var sideBlockCount = radiusConfig.Naver.sideBlockCount;
+        var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+
+        if(canvas == null){
+            canvas = document.createElement("canvas");
+
+            canvas.width = sideBlockCount * canvasBlockSize;
+            canvas.height = sideBlockCount * canvasBlockSize;
+        }
+
+        var ctx = canvas.getContext("2d");
+        var temp = this.getNW(radiusConfig, centerLatLng);
+        var startLatLng = new LatLng(
+            temp.getX() + this.getWidthBetweenBlock() / 2,
+            temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
+        );
+
+        var returnXValue = startLatLng.getX();
+        var order = 0;
+        var isCorner = false;
+        var total = sideBlockCount * sideBlockCount;
+        var complete = 0;
+
+        layerProfile.setHeight(defaultBlockHeight);
+
+        var naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
+            detail: {
+                total: total
+            }
+
+        });
+
+        var naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
+        var naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
+
+        document.body.dispatchEvent(naverTileOnLoadStartEvent);
+        for (var i = 0; i < sideBlockCount; i++) {
+            for (var j = 0; j < sideBlockCount; j++) {
+
+                if (i + 1 === sideBlockCount && j === 0) {
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockNoLogo());
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockWithLogo());
+                    isCorner = true;
+                }
+
+                var offsetY = this.getHeightBetweenBlockNoLogo() / 2;
+                var offsetX = this.getWidthBetweenBlock() / 2;
+
+                var yMin = startLatLng.getY() - offsetY;
+                var xMin = startLatLng.getX() - offsetX;
+
+                var yMax = startLatLng.getY() + offsetY;
+                var xMax = startLatLng.getX() + offsetX;
+
+
+                layerProfile.setYMin(yMin);
+                layerProfile.setXMin(xMin);
+                layerProfile.setYMax(yMax);
+                layerProfile.setXMax(xMax);
+                
+                var image = new Image();
+                image.crossOrigin = "*";
+                image.src = layerProfile.getUrl();
+
+                (function (_order, _image) {
+                    var xPos = (_order % sideBlockCount) * canvasBlockSize;
+                    var yPos = parseInt(_order / sideBlockCount) * canvasBlockSize;
+
+                    _image.onload = function () {
+                        ctx.drawImage(_image, 0, 0, _image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
+                        complete++;
+                        document.body.dispatchEvent(naverTileOnProgressEvent);
+
+                        if (complete == total) {
+                            onSuccess(canvas);
+                        }
+                    }
+
+                    _image.onerror = function () {
+                        complete++;
+                        document.body.dispatchEvent(naverTileOnErrorEvent);
+
+                        if (complete == total) {
+                            onSuccess(canvas);
+                        }
+                    }
+
+                })(order, image)
+
+                order++;
+                startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
+
+                if (isCorner) {
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockWithLogo());
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+                    isCorner = false;
+                }
+
+                await this.delay(100);
+            }
+
+            startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+        }
+    }
+
+    delay(millis){
+        return new Promise(function(resolve){
+            setTimeout(resolve,millis);
+        });
+    }
 }
