@@ -32,6 +32,7 @@ src="https://cdn.jsdelivr.net/gh/lcw3176/mapshot-lib@master/1.4.1/mapshot.min.js
 ```
 
 ## 사용법
+세부적인 내용은 [wiki](https://github.com/lcw3176/mapshot-lib/wiki) 에서 확인 가능합니다.
 
 - 좌표 초기화
 
