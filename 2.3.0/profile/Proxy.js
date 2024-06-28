@@ -6,7 +6,7 @@ export class Proxy {
         this.proxyUrl;
         this.layerMode = false;
         this.companyType;
-        this.width;
+        this.noLabel = false;
     }
 
     setLayerMode(mode) {
@@ -17,13 +17,19 @@ export class Proxy {
         return this.layerMode;
     }
 
+    setNoLabel(mode) {
+        this.noLabel = mode;
+    }
+
+    isNoLabel() {
+        return this.noLabel;
+    }
+
     setRadius(radius) {
         if (this.companyType === "google") {
             this.level = radius.Google.level;
-            this.width = radius.Google.width;
         } else if (this.companyType === "kakao") {
             this.level = radius.Kakao.level;
-            this.width = radius.Kakao.width;
         }
     }
 
@@ -45,10 +51,6 @@ export class Proxy {
 
     getCompanyType() {
         return this.companyType;
-    }
-
-    getWidth() {
-        return this.width;
     }
 
     getProxyUrl() {
@@ -78,8 +80,8 @@ export class Proxy {
             "&level=" + this.level +
             "&type=" + this.mapType +
             "&layerMode=" + this.layerMode +
-            "&companyType=" + this.companyType;
-
+            "&companyType=" + this.companyType + 
+            "&noLabel=" + this.noLabel;
     }
 
 }
