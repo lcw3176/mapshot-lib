@@ -209,7 +209,7 @@ export class NaverTile {
         let returnXValue = startLatLng.getX();
         let order = 0;
         let total = sideBlockCount * sideBlockCount;
-        
+
         layerProfile.setHeight(defaultBlockHeight);
 
         let naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
@@ -244,16 +244,15 @@ export class NaverTile {
                 let xPos = (order % sideBlockCount) * canvasBlockSize;
                 let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
                 
-                let result = await this.processImage(layerProfile.getUrl(), xPos, yPos, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 0);
+                let result = await this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 0);
                 
                 if(!result){
-                    await this.processImage(layerProfile.getUrl(), xPos, yPos, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 1);
+                    await this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 1);
                 }
 
                 order++;
                 startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
 
-                await this.delay(100);
             }
 
             startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
@@ -262,7 +261,7 @@ export class NaverTile {
         onSuccess(canvas);
     }
 
-    async processImage(url, xPos, yPos, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, retryCount) {
+    async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, retryCount) {
         return new Promise((resolve) => {
             let image = new Image();
             image.crossOrigin = "*";
@@ -279,8 +278,6 @@ export class NaverTile {
                 if(retryCount >= 1){
                     document.body.dispatchEvent(naverTileOnErrorEvent);
                 }
-
-                console.log("재시도");
                 resolve(false);
             };
         });
