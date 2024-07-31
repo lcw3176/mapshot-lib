@@ -208,10 +208,8 @@ export class NaverTile {
 
         let returnXValue = startLatLng.getX();
         let order = 0;
-
         let total = sideBlockCount * sideBlockCount;
-        let complete = 0;
-
+        
         layerProfile.setHeight(defaultBlockHeight);
 
         let naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
@@ -246,7 +244,11 @@ export class NaverTile {
                 let xPos = (order % sideBlockCount) * canvasBlockSize;
                 let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
                 
-                await processImage(layerProfile.getUrl(), xPos, yPos, canvasBlockSize, complete, total, ctx, canvas, naverTileOnProgressEvent, naverTileOnErrorEvent, onSuccess, 0);
+                let result = await this.processImage(layerProfile.getUrl(), xPos, yPos, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 0);
+                
+                if(!result){
+                    await this.processImage(layerProfile.getUrl(), xPos, yPos, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 1);
+                }
 
                 order++;
                 startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
@@ -256,9 +258,11 @@ export class NaverTile {
 
             startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
         }
+
+        onSuccess(canvas);
     }
 
-    async processImage(url, xPos, yPos, canvasBlockSize, complete, total, ctx, canvas, naverTileOnProgressEvent, naverTileOnErrorEvent, onSuccess, retryCount) {
+    async processImage(url, xPos, yPos, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, retryCount) {
         return new Promise((resolve) => {
             let image = new Image();
             image.crossOrigin = "*";
@@ -266,28 +270,18 @@ export class NaverTile {
 
             image.onload = function () {
                 ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                complete++;
                 document.body.dispatchEvent(naverTileOnProgressEvent);
-    
-                if (complete == total) {
-                    onSuccess(canvas);
-                }
-                resolve();
+
+                resolve(true);
             };
     
             image.onerror = function () {
-                if(retryCount < 2){
-                    processImage(url, xPos, yPos, canvasBlockSize, complete, total, ctx, canvas, naverTileOnProgressEvent, naverTileOnErrorEvent, onSuccess, retryCount + 1);
-                } else {
-                    complete++;
+                if(retryCount >= 1){
                     document.body.dispatchEvent(naverTileOnErrorEvent);
-        
-                    if (complete == total) {
-                        onSuccess(canvas);
-                    }
                 }
 
-                resolve();
+                console.log("재시도");
+                resolve(false);
             };
         });
     }
