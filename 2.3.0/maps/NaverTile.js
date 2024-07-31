@@ -188,10 +188,9 @@ export class NaverTile {
     async drawLayers(centerLatLng, radiusConfig, layerProfile, canvas, onSuccess) {
         this.setLevel(radiusConfig);
         const defaultBlockHeight = 1000;
-
-
-        var sideBlockCount = radiusConfig.Naver.sideBlockCount;
-        var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+ 
+        let sideBlockCount = radiusConfig.Naver.sideBlockCount;
+        let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
         if(canvas == null){
             canvas = document.createElement("canvas");
@@ -200,43 +199,43 @@ export class NaverTile {
             canvas.height = sideBlockCount * canvasBlockSize;
         }
 
-        var ctx = canvas.getContext("2d");
-        var temp = this.getNW(radiusConfig, centerLatLng);
-        var startLatLng = new LatLng(
+        let ctx = canvas.getContext("2d");
+        let temp = this.getNW(radiusConfig, centerLatLng);
+        let startLatLng = new LatLng(
             temp.getX() + this.getWidthBetweenBlock() / 2,
             temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
         );
 
-        var returnXValue = startLatLng.getX();
-        var order = 0;
+        let returnXValue = startLatLng.getX();
+        let order = 0;
 
-        var total = sideBlockCount * sideBlockCount;
-        var complete = 0;
+        let total = sideBlockCount * sideBlockCount;
+        let complete = 0;
 
         layerProfile.setHeight(defaultBlockHeight);
 
-        var naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
+        let naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
             detail: {
                 total: total
             }
 
         });
 
-        var naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
-        var naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
+        let naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
+        let naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
 
         document.body.dispatchEvent(naverTileOnLoadStartEvent);
-        for (var i = 0; i < sideBlockCount; i++) {
-            for (var j = 0; j < sideBlockCount; j++) {
+        for (let i = 0; i < sideBlockCount; i++) {
+            for (let j = 0; j < sideBlockCount; j++) {
 
-                var offsetY = this.getHeightBetweenBlockNoLogo() / 2;
-                var offsetX = this.getWidthBetweenBlock() / 2;
+                let offsetY = this.getHeightBetweenBlockNoLogo() / 2;
+                let offsetX = this.getWidthBetweenBlock() / 2;
 
-                var yMin = startLatLng.getY() - offsetY;
-                var xMin = startLatLng.getX() - offsetX;
+                let yMin = startLatLng.getY() - offsetY;
+                let xMin = startLatLng.getX() - offsetX;
 
-                var yMax = startLatLng.getY() + offsetY;
-                var xMax = startLatLng.getX() + offsetX;
+                let yMax = startLatLng.getY() + offsetY;
+                let xMax = startLatLng.getX() + offsetX;
 
 
                 layerProfile.setYMin(yMin);
@@ -244,34 +243,10 @@ export class NaverTile {
                 layerProfile.setYMax(yMax);
                 layerProfile.setXMax(xMax);
                 
-                var image = new Image();
-                image.crossOrigin = "*";
-                image.src = layerProfile.getUrl();
-
-                (function (_order, _image) {
-                    var xPos = (_order % sideBlockCount) * canvasBlockSize;
-                    var yPos = parseInt(_order / sideBlockCount) * canvasBlockSize;
-
-                    _image.onload = function () {
-                        ctx.drawImage(_image, 0, 0, _image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                        complete++;
-                        document.body.dispatchEvent(naverTileOnProgressEvent);
-
-                        if (complete == total) {
-                            onSuccess(canvas);
-                        }
-                    }
-
-                    _image.onerror = function () {
-                        complete++;
-                        document.body.dispatchEvent(naverTileOnErrorEvent);
-
-                        if (complete == total) {
-                            onSuccess(canvas);
-                        }
-                    }
-
-                })(order, image)
+                let xPos = (order % sideBlockCount) * canvasBlockSize;
+                let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
+                
+                await processImage(layerProfile.getUrl(), xPos, yPos, canvasBlockSize, complete, total, ctx, canvas, naverTileOnProgressEvent, naverTileOnErrorEvent, onSuccess, 0);
 
                 order++;
                 startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
@@ -281,6 +256,40 @@ export class NaverTile {
 
             startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
         }
+    }
+
+    async processImage(url, xPos, yPos, canvasBlockSize, complete, total, ctx, canvas, naverTileOnProgressEvent, naverTileOnErrorEvent, onSuccess, retryCount) {
+        return new Promise((resolve) => {
+            let image = new Image();
+            image.crossOrigin = "*";
+            image.src = url;
+
+            image.onload = function () {
+                ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
+                complete++;
+                document.body.dispatchEvent(naverTileOnProgressEvent);
+    
+                if (complete == total) {
+                    onSuccess(canvas);
+                }
+                resolve();
+            };
+    
+            image.onerror = function () {
+                if(retryCount < 2){
+                    processImage(url, xPos, yPos, canvasBlockSize, complete, total, ctx, canvas, naverTileOnProgressEvent, naverTileOnErrorEvent, onSuccess, retryCount + 1);
+                } else {
+                    complete++;
+                    document.body.dispatchEvent(naverTileOnErrorEvent);
+        
+                    if (complete == total) {
+                        onSuccess(canvas);
+                    }
+                }
+
+                resolve();
+            };
+        });
     }
 
     delay(millis){
