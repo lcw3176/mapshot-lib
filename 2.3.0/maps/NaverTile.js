@@ -188,9 +188,7 @@ export class NaverTile {
     async drawLayers(centerLatLng, radiusConfig, layerProfile, canvas, onSuccess) {
         this.setLevel(radiusConfig);
         const defaultBlockHeight = 1000;
-        // const logoRemover = 27;
 
-      
 
         var sideBlockCount = radiusConfig.Naver.sideBlockCount;
         var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
@@ -211,7 +209,7 @@ export class NaverTile {
 
         var returnXValue = startLatLng.getX();
         var order = 0;
-        // var isCorner = false;
+
         var total = sideBlockCount * sideBlockCount;
         var complete = 0;
 
@@ -230,13 +228,6 @@ export class NaverTile {
         document.body.dispatchEvent(naverTileOnLoadStartEvent);
         for (var i = 0; i < sideBlockCount; i++) {
             for (var j = 0; j < sideBlockCount; j++) {
-
-                // if (i + 1 === sideBlockCount && j === 0) {
-                //     layerProfile.setHeight(1000 - logoRemover);
-                //     startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockNoLogo());
-                //     startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockWithLogo());
-                //     isCorner = true;
-                // }
 
                 var offsetY = this.getHeightBetweenBlockNoLogo() / 2;
                 var offsetX = this.getWidthBetweenBlock() / 2;
@@ -284,13 +275,6 @@ export class NaverTile {
 
                 order++;
                 startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
-
-                // if (isCorner) {
-                //     layerProfile.setHeight(1000 - logoRemover);
-                //     startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockWithLogo());
-                //     startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
-                //     isCorner = false;
-                // }
 
                 await this.delay(100);
             }
