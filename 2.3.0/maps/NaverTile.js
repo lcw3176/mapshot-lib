@@ -244,15 +244,17 @@ export class NaverTile {
                 let xPos = (order % sideBlockCount) * canvasBlockSize;
                 let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
                 
-                let result = await this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 0);
-                
-                if(!result){
-                    await this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 1);
-                }
+                this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 0)
+                    .then((result) => {
+                        if(!result){
+                            this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 1);
+                        }
+                    });
 
                 order++;
                 startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
-
+                
+                await this.delay(50);
             }
 
             startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
