@@ -7,6 +7,9 @@ export const Radius = {
     //    }
     // }
     // 이런식으로 변경해도 무방할듯
+    // 
+    // profile 이랑 mapsho/tile쪽도 간소화 가능해보임
+    // 코드 정리좀
     
     One: {
         Naver: {
