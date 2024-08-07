@@ -118,5 +118,3 @@ dist
 .pnp.*
 
 package-lock.json
-builds/
-target/
