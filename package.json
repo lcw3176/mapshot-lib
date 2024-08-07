@@ -5,7 +5,7 @@
   "main": "mapshot.latest.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel ./target/*/*/*.js -o ./builds/mapshot.babel.js && javascript-obfuscator ./builds/mapshot.babel.js --output ./builds/mapshot.min.js"
+    "build": "babel ./src/*/*.js -o ./builds/mapshot.babel.js && javascript-obfuscator ./builds/mapshot.babel.js --output ./builds/mapshot.min.js"
   },
   "repository": {
     "type": "git",
