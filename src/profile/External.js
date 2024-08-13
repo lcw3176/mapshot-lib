@@ -1,4 +1,4 @@
-export class Proxy {
+export class External {
     constructor() {
         this.center;
         this.level;
