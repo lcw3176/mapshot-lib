@@ -80,12 +80,12 @@ export class Tile {
         return new LatLng(Lat, Lng);
     }
 
-    draw(centerLatLng, radiusConfig, naverProfile, onSuccess) {
-        this.setLevel(radiusConfig);
+    draw(centerLatLng, radius, naverProfile, onSuccess) {
+        this.setLevel(radius);
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
-        var sideBlockCount = radiusConfig.sideBlockCount;
+        var sideBlockCount = radius.sideBlockCount;
         var canvas = document.createElement("canvas");
         var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
@@ -93,7 +93,7 @@ export class Tile {
         canvas.height = sideBlockCount * canvasBlockSize;
 
         var ctx = canvas.getContext("2d");
-        var temp = this.getNW(radiusConfig, centerLatLng);
+        var temp = this.getNW(radius, centerLatLng);
         var startLatLng = new LatLng(
             temp.getX() + this.width / 2,
             temp.getY() - this.noLogoHeight / 2
@@ -173,11 +173,11 @@ export class Tile {
         }
     }
 
-    async drawLayers(centerLatLng, radiusConfig, layerProfile, canvas, onSuccess) {
-        this.setLevel(radiusConfig);
+    async drawLayers(centerLatLng, radius, layerProfile, canvas, onSuccess) {
+        this.setLevel(radius);
         const defaultBlockHeight = 1000;
  
-        let sideBlockCount = radiusConfig.sideBlockCount;
+        let sideBlockCount = radius.sideBlockCount;
         let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
         if(canvas == null){
@@ -188,7 +188,7 @@ export class Tile {
         }
 
         let ctx = canvas.getContext("2d");
-        let temp = this.getNW(radiusConfig, centerLatLng);
+        let temp = this.getNW(radius, centerLatLng);
         let startLatLng = new LatLng(
             temp.getX() + this.width / 2,
             temp.getY() - this.noLogoHeight / 2
