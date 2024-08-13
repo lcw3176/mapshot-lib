@@ -16,7 +16,7 @@ export class Naver {
     }
 
     setLevel(radius) {
-        this.level = radius.Naver.zoom;
+        this.level = radius.zoom;
     }
 
     setKey(param) {

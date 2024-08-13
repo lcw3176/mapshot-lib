@@ -14,7 +14,6 @@ export class Layer {
     }
 
     removeLayer(){
-        // this.layers = this.layers.filter((i) => i !== param);
         this.layers.length = 0;
     }
 
