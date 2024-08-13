@@ -1,4 +1,4 @@
-export class NaverTile {
+export class Tile {
     constructor() {
         this.width;
         this.noLogoHeight; // 로고 없을 때
@@ -20,13 +20,13 @@ export class NaverTile {
 
     setLevel(radius) {
 
-        if (radius.Naver.zoom === Radius.One.Naver.zoom || radius.Naver.zoom === Radius.Two.Naver.zoom) {
+        if (radius.zoom === Radius.One.zoom || radius.zoom === Radius.Two.zoom) {
             this.correctFix = 0.00002833;
             this.width = 0.00268;
             this.noLogoValue = 0.002070;
             this.withLogoValue = 0.00204;
 
-        } else if (radius.Naver.zoom === Radius.Five.Naver.zoom || radius.Naver.zoom === Radius.Ten.Naver.zoom) {
+        } else if (radius.zoom === Radius.Five.zoom || radius.zoom === Radius.Ten.zoom) {
             this.correctFix = 0.00011633;
             this.width = 0.01072;
             this.noLogoValue = 0.00829;
@@ -53,8 +53,8 @@ export class NaverTile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(radius.Naver.sideBlockCount / 2) + this.width / 2;
+        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+        var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
@@ -64,8 +64,8 @@ export class NaverTile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(radius.Naver.sideBlockCount / 2) - this.width / 2;
+        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+        var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
@@ -75,8 +75,8 @@ export class NaverTile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(radius.Naver.sideBlockCount / 2) + this.width / 2;
+        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+        var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
@@ -86,8 +86,8 @@ export class NaverTile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(radius.Naver.sideBlockCount / 2) - this.width / 2;
+        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+        var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
@@ -97,7 +97,7 @@ export class NaverTile {
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
-        var sideBlockCount = radiusConfig.Naver.sideBlockCount;
+        var sideBlockCount = radiusConfig.sideBlockCount;
         var canvas = document.createElement("canvas");
         var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
@@ -189,7 +189,7 @@ export class NaverTile {
         this.setLevel(radiusConfig);
         const defaultBlockHeight = 1000;
  
-        let sideBlockCount = radiusConfig.Naver.sideBlockCount;
+        let sideBlockCount = radiusConfig.sideBlockCount;
         let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
         if(canvas == null){
