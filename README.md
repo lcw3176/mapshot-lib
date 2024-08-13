@@ -6,7 +6,7 @@
 
 ## 소개
 Naver Static Map Api를 조금 더 편하게 이용하기 위해 만들어진 라이브러리 입니다. Static Map의 양 옆 타일들의 중심 좌표 계산과, 위도가 내려갈수록 어긋나는 좌표를 보정하는 기능들이 있습니다. 
-이 라이브러리는 [Mapshot](https://mapshot.netlify.app) 운영에 사용되고 있습니다.
+이 라이브러리는 [Mapshot](https://kmapshot.com) 운영에 사용되고 있습니다.
 
 ## 요구사항
  - Naver Static Map API 키 값
@@ -68,7 +68,7 @@ naverProfile.setKey(personal_key);
 
 - 지도 캡쳐하기
 ```javascript
-import { Naver, NaverTile, LatLng, Radius  } from "../assets/js/mapshot.min.js";
+import { Naver, Tile, LatLng, Radius  } from "../assets/js/mapshot.min.js";
 
 let radius = Radius.Five;
 let mapType = 'satellite_base';
@@ -81,10 +81,10 @@ naverProfile.setKey(personal_key);
 
 let latlng = new LatLng(37.5642135, 127.0016985);
 
-let naverTile = new NaverTile();
+let tile = new Tile();
 
 // 콜백함수에 각각의 지도 이미지를 합친 canvas가 전달됩니다
-naverTile.draw(latlng, radius, naverProfile, (canvas) => {
+tile.draw(latlng, radius, naverProfile, (canvas) => {
     canvas.toBlob((blob) => {
         // do something...
     }, "image/jpeg");
@@ -112,9 +112,9 @@ document.body.addEventListener("naverTileOnError", () => {
 
 - 부가 기능
 ```javascript
-import { NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
+import { Tile, LatLng, Radius } from "../assets/js/mapshot.min.js";
 
-let tile = new NaverTile();
+let tile = new Tile();
 let centerLatlng = new LatLng(37.5642135, 127.0016985);
 
 // 중점에서 2km 반경 사각형의 남동쪽 좌표 가져오기
