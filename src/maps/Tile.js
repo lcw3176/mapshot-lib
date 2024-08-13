@@ -36,18 +36,6 @@ export class Tile {
         }
     }
 
-    getWidthBetweenBlock() {
-        return this.width;
-    }
-
-    getHeightBetweenBlockNoLogo() {
-        return this.noLogoHeight;
-    }
-
-    getHeightBetweenBlockWithLogo() {
-        return this.withLogoHeight;
-    }
-
 
     getSE(radius, latlng) {
         this.setLevel(radius);
@@ -107,8 +95,8 @@ export class Tile {
         var ctx = canvas.getContext("2d");
         var temp = this.getNW(radiusConfig, centerLatLng);
         var startLatLng = new LatLng(
-            temp.getX() + this.getWidthBetweenBlock() / 2,
-            temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
+            temp.getX() + this.width / 2,
+            temp.getY() - this.noLogoHeight / 2
         );
 
         var returnXValue = startLatLng.getX();
@@ -134,8 +122,8 @@ export class Tile {
 
                 if (i + 1 === sideBlockCount && j === 0) {
                     naverProfile.setHeight(1000 - logoRemover);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockNoLogo());
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockWithLogo());
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
                     isCorner = true;
                 }
 
@@ -171,17 +159,17 @@ export class Tile {
                 })(order, image)
 
                 order++;
-                startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
+                startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
 
                 if (isCorner) {
                     naverProfile.setHeight(1000);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockWithLogo());
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
                     isCorner = false;
                 }
             }
 
-            startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+            startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
         }
     }
 
@@ -202,8 +190,8 @@ export class Tile {
         let ctx = canvas.getContext("2d");
         let temp = this.getNW(radiusConfig, centerLatLng);
         let startLatLng = new LatLng(
-            temp.getX() + this.getWidthBetweenBlock() / 2,
-            temp.getY() - this.getHeightBetweenBlockNoLogo() / 2
+            temp.getX() + this.width / 2,
+            temp.getY() - this.noLogoHeight / 2
         );
 
         let returnXValue = startLatLng.getX();
@@ -226,8 +214,8 @@ export class Tile {
         for (let i = 0; i < sideBlockCount; i++) {
             for (let j = 0; j < sideBlockCount; j++) {
 
-                let offsetY = this.getHeightBetweenBlockNoLogo() / 2;
-                let offsetX = this.getWidthBetweenBlock() / 2;
+                let offsetY = this.noLogoHeight / 2;
+                let offsetX = this.width / 2;
 
                 let yMin = startLatLng.getY() - offsetY;
                 let xMin = startLatLng.getX() - offsetX;
@@ -252,12 +240,12 @@ export class Tile {
                     });
 
                 order++;
-                startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
+                startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
                 
                 await this.delay(50);
             }
 
-            startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+            startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
         }
 
         onSuccess(canvas);
