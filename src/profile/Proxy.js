@@ -26,11 +26,7 @@ export class Proxy {
     }
 
     setRadius(radius) {
-        if (this.companyType === "google") {
-            this.level = radius.Google.level;
-        } else if (this.companyType === "kakao") {
-            this.level = radius.Kakao.level;
-        }
+        this.level = radius.level;
     }
 
     setMapType(type) {
