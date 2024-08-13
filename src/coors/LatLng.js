@@ -9,14 +9,15 @@ export class LatLng {
     }
 
     init(lat, lng) {
-
-        if (lat > lng) {
-            this.x = lat
-            this.y = lng
-        } else {
-            this.x = lng
-            this.y = lat;
-        }
+        this.y = lat;
+        this.x = lng; 
+        // if (lat > lng) {
+        //     this.x = lat
+        //     this.y = lng
+        // } else {
+        //     this.x = lng
+        //     this.y = lat;
+        // }
     }
 
 
