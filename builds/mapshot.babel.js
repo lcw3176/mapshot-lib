@@ -21,14 +21,15 @@ var LatLng = exports.LatLng = function () {
     _createClass(LatLng, [{
         key: "init",
         value: function init(lat, lng) {
-
-            if (lat > lng) {
-                this.x = lat;
-                this.y = lng;
-            } else {
-                this.x = lng;
-                this.y = lat;
-            }
+            this.y = lat;
+            this.x = lng;
+            // if (lat > lng) {
+            //     this.x = lat
+            //     this.y = lng
+            // } else {
+            //     this.x = lng
+            //     this.y = lat;
+            // }
         }
     }, {
         key: "getX",
@@ -52,9 +53,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var NaverTile = exports.NaverTile = function () {
-    function NaverTile() {
-        _classCallCheck(this, NaverTile);
+var Tile = exports.Tile = function () {
+    function Tile() {
+        _classCallCheck(this, Tile);
 
         this.width;
         this.noLogoHeight; // 로고 없을 때
@@ -65,7 +66,7 @@ var NaverTile = exports.NaverTile = function () {
         this.correctFix;
     }
 
-    _createClass(NaverTile, [{
+    _createClass(Tile, [{
         key: "generate",
         value: function generate(latlng) {
             var controlPoint = 37.5668;
@@ -77,12 +78,12 @@ var NaverTile = exports.NaverTile = function () {
         key: "setLevel",
         value: function setLevel(radius) {
 
-            if (radius.Naver.zoom === Radius.One.Naver.zoom || radius.Naver.zoom === Radius.Two.Naver.zoom) {
+            if (radius.zoom === Radius.One.zoom || radius.zoom === Radius.Two.zoom) {
                 this.correctFix = 0.00002833;
                 this.width = 0.00268;
                 this.noLogoValue = 0.002070;
                 this.withLogoValue = 0.00204;
-            } else if (radius.Naver.zoom === Radius.Five.Naver.zoom || radius.Naver.zoom === Radius.Ten.Naver.zoom) {
+            } else if (radius.zoom === Radius.Five.zoom || radius.zoom === Radius.Ten.zoom) {
                 this.correctFix = 0.00011633;
                 this.width = 0.01072;
                 this.noLogoValue = 0.00829;
@@ -92,28 +93,13 @@ var NaverTile = exports.NaverTile = function () {
             }
         }
     }, {
-        key: "getWidthBetweenBlock",
-        value: function getWidthBetweenBlock() {
-            return this.width;
-        }
-    }, {
-        key: "getHeightBetweenBlockNoLogo",
-        value: function getHeightBetweenBlockNoLogo() {
-            return this.noLogoHeight;
-        }
-    }, {
-        key: "getHeightBetweenBlockWithLogo",
-        value: function getHeightBetweenBlockWithLogo() {
-            return this.withLogoHeight;
-        }
-    }, {
         key: "getSE",
         value: function getSE(radius, latlng) {
             this.setLevel(radius);
             this.generate(latlng);
 
-            var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) - this.noLogoHeight / 2;
-            var Lng = latlng.getX() + this.width * parseInt(radius.Naver.sideBlockCount / 2) + this.width / 2;
+            var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+            var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
             return new LatLng(Lat, Lng);
         }
@@ -123,8 +109,8 @@ var NaverTile = exports.NaverTile = function () {
             this.setLevel(radius);
             this.generate(latlng);
 
-            var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) - this.noLogoHeight / 2;
-            var Lng = latlng.getX() - this.width * parseInt(radius.Naver.sideBlockCount / 2) - this.width / 2;
+            var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+            var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
             return new LatLng(Lat, Lng);
         }
@@ -134,8 +120,8 @@ var NaverTile = exports.NaverTile = function () {
             this.setLevel(radius);
             this.generate(latlng);
 
-            var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) + this.noLogoHeight / 2;
-            var Lng = latlng.getX() + this.width * parseInt(radius.Naver.sideBlockCount / 2) + this.width / 2;
+            var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+            var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
             return new LatLng(Lat, Lng);
         }
@@ -145,19 +131,19 @@ var NaverTile = exports.NaverTile = function () {
             this.setLevel(radius);
             this.generate(latlng);
 
-            var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.Naver.sideBlockCount / 2) + this.noLogoHeight / 2;
-            var Lng = latlng.getX() - this.width * parseInt(radius.Naver.sideBlockCount / 2) - this.width / 2;
+            var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+            var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
             return new LatLng(Lat, Lng);
         }
     }, {
         key: "draw",
-        value: function draw(centerLatLng, radiusConfig, naverProfile, onSuccess) {
-            this.setLevel(radiusConfig);
+        value: function draw(centerLatLng, radius, naverProfile, onSuccess) {
+            this.setLevel(radius);
             var defaultBlockHeight = 1000;
             var logoRemover = 27;
 
-            var sideBlockCount = radiusConfig.Naver.sideBlockCount;
+            var sideBlockCount = radius.sideBlockCount;
             var canvas = document.createElement("canvas");
             var canvasBlockSize = sideBlockCount <= 11 ? 1000 : 500;
 
@@ -165,8 +151,8 @@ var NaverTile = exports.NaverTile = function () {
             canvas.height = sideBlockCount * canvasBlockSize;
 
             var ctx = canvas.getContext("2d");
-            var temp = this.getNW(radiusConfig, centerLatLng);
-            var startLatLng = new LatLng(temp.getX() + this.getWidthBetweenBlock() / 2, temp.getY() - this.getHeightBetweenBlockNoLogo() / 2);
+            var temp = this.getNW(radius, centerLatLng);
+            var startLatLng = new LatLng(temp.getX() + this.width / 2, temp.getY() - this.noLogoHeight / 2);
 
             var returnXValue = startLatLng.getX();
             var order = 0;
@@ -191,8 +177,8 @@ var NaverTile = exports.NaverTile = function () {
 
                     if (i + 1 === sideBlockCount && j === 0) {
                         naverProfile.setHeight(1000 - logoRemover);
-                        startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockNoLogo());
-                        startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockWithLogo());
+                        startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
+                        startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
                         isCorner = true;
                     }
 
@@ -227,28 +213,28 @@ var NaverTile = exports.NaverTile = function () {
                     })(order, image);
 
                     order++;
-                    startLatLng.init(startLatLng.getX() + this.getWidthBetweenBlock(), startLatLng.getY());
+                    startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
 
                     if (isCorner) {
                         naverProfile.setHeight(1000);
-                        startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.getHeightBetweenBlockWithLogo());
-                        startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+                        startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
+                        startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
                         isCorner = false;
                     }
                 }
 
-                startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+                startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
             }
         }
     }, {
         key: "drawLayers",
-        value: async function drawLayers(centerLatLng, radiusConfig, layerProfile, canvas, onSuccess) {
+        value: async function drawLayers(centerLatLng, radius, layerProfile, canvas, onSuccess) {
             var _this = this;
 
-            this.setLevel(radiusConfig);
+            this.setLevel(radius);
             var defaultBlockHeight = 1000;
 
-            var sideBlockCount = radiusConfig.Naver.sideBlockCount;
+            var sideBlockCount = radius.sideBlockCount;
             var canvasBlockSize = sideBlockCount <= 11 ? 1000 : 500;
 
             if (canvas == null) {
@@ -259,8 +245,8 @@ var NaverTile = exports.NaverTile = function () {
             }
 
             var ctx = canvas.getContext("2d");
-            var temp = this.getNW(radiusConfig, centerLatLng);
-            var startLatLng = new LatLng(temp.getX() + this.getWidthBetweenBlock() / 2, temp.getY() - this.getHeightBetweenBlockNoLogo() / 2);
+            var temp = this.getNW(radius, centerLatLng);
+            var startLatLng = new LatLng(temp.getX() + this.width / 2, temp.getY() - this.noLogoHeight / 2);
 
             var returnXValue = startLatLng.getX();
             var order = 0;
@@ -282,8 +268,8 @@ var NaverTile = exports.NaverTile = function () {
             for (var i = 0; i < sideBlockCount; i++) {
                 var _loop = async function _loop(j) {
 
-                    var offsetY = _this.getHeightBetweenBlockNoLogo() / 2;
-                    var offsetX = _this.getWidthBetweenBlock() / 2;
+                    var offsetY = _this.noLogoHeight / 2;
+                    var offsetX = _this.width / 2;
 
                     var yMin = startLatLng.getY() - offsetY;
                     var xMin = startLatLng.getX() - offsetX;
@@ -306,7 +292,7 @@ var NaverTile = exports.NaverTile = function () {
                     });
 
                     order++;
-                    startLatLng.init(startLatLng.getX() + _this.getWidthBetweenBlock(), startLatLng.getY());
+                    startLatLng.init(startLatLng.getX() + _this.width, startLatLng.getY());
 
                     await _this.delay(50);
                 };
@@ -315,7 +301,7 @@ var NaverTile = exports.NaverTile = function () {
                     await _loop(j);
                 }
 
-                startLatLng.init(returnXValue, startLatLng.getY() - this.getHeightBetweenBlockNoLogo());
+                startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
             }
 
             onSuccess(canvas);
@@ -352,7 +338,111 @@ var NaverTile = exports.NaverTile = function () {
         }
     }]);
 
-    return NaverTile;
+    return Tile;
+}();
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var External = exports.External = function () {
+    function External() {
+        _classCallCheck(this, External);
+
+        this.center;
+        this.level;
+        this.mapType;
+        this.proxyUrl;
+        this.layerMode = false;
+        this.companyType;
+        this.noLabel = false;
+    }
+
+    _createClass(External, [{
+        key: "setLayerMode",
+        value: function setLayerMode(mode) {
+            this.layerMode = mode;
+        }
+    }, {
+        key: "isLayerMode",
+        value: function isLayerMode() {
+            return this.layerMode;
+        }
+    }, {
+        key: "setNoLabel",
+        value: function setNoLabel(mode) {
+            this.noLabel = mode;
+        }
+    }, {
+        key: "isNoLabel",
+        value: function isNoLabel() {
+            return this.noLabel;
+        }
+    }, {
+        key: "setRadius",
+        value: function setRadius(radius) {
+            this.level = radius.level;
+        }
+    }, {
+        key: "setMapType",
+        value: function setMapType(type) {
+            this.mapType = type;
+        }
+    }, {
+        key: "setCenter",
+        value: function setCenter(center) {
+            this.center = center;
+        }
+    }, {
+        key: "setProxyUrl",
+        value: function setProxyUrl(proxyUrl) {
+            this.proxyUrl = proxyUrl;
+        }
+    }, {
+        key: "setCompanyType",
+        value: function setCompanyType(companyType) {
+            this.companyType = companyType;
+        }
+    }, {
+        key: "getCompanyType",
+        value: function getCompanyType() {
+            return this.companyType;
+        }
+    }, {
+        key: "getProxyUrl",
+        value: function getProxyUrl() {
+            return this.proxyUrl;
+        }
+    }, {
+        key: "getUrlWithParams",
+        value: function getUrlWithParams() {
+            return this.proxyUrl + this.getQueryString();
+        }
+    }, {
+        key: "getParamsToJson",
+        value: function getParamsToJson() {
+            var jsonData = {
+                layerMode: this.layerMode,
+                lat: this.center.getY(),
+                lng: this.center.getX(),
+                level: this.level,
+                type: this.mapType,
+                companyType: this.companyType
+            };
+
+            return JSON.stringify(jsonData);
+        }
+    }, {
+        key: "getQueryString",
+        value: function getQueryString() {
+            return "?lat=" + this.center.getY() + "&lng=" + this.center.getX() + "&level=" + this.level + "&type=" + this.mapType + "&layerMode=" + this.layerMode + "&companyType=" + this.companyType + "&noLabel=" + this.noLabel;
+        }
+    }]);
+
+    return External;
 }();
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -383,7 +473,6 @@ var Layer = exports.Layer = function () {
     }, {
         key: "removeLayer",
         value: function removeLayer() {
-            // this.layers = this.layers.filter((i) => i !== param);
             this.layers.length = 0;
         }
     }, {
@@ -457,7 +546,7 @@ var Naver = exports.Naver = function () {
     }, {
         key: "setLevel",
         value: function setLevel(radius) {
-            this.level = radius.Naver.zoom;
+            this.level = radius.zoom;
         }
     }, {
         key: "setKey",
@@ -481,190 +570,29 @@ var Naver = exports.Naver = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Proxy = exports.Proxy = function () {
-    function Proxy() {
-        _classCallCheck(this, Proxy);
-
-        this.center;
-        this.level;
-        this.mapType;
-        this.proxyUrl;
-        this.layerMode = false;
-        this.companyType;
-        this.noLabel = false;
-    }
-
-    _createClass(Proxy, [{
-        key: "setLayerMode",
-        value: function setLayerMode(mode) {
-            this.layerMode = mode;
-        }
-    }, {
-        key: "isLayerMode",
-        value: function isLayerMode() {
-            return this.layerMode;
-        }
-    }, {
-        key: "setNoLabel",
-        value: function setNoLabel(mode) {
-            this.noLabel = mode;
-        }
-    }, {
-        key: "isNoLabel",
-        value: function isNoLabel() {
-            return this.noLabel;
-        }
-    }, {
-        key: "setRadius",
-        value: function setRadius(radius) {
-            if (this.companyType === "google") {
-                this.level = radius.Google.level;
-            } else if (this.companyType === "kakao") {
-                this.level = radius.Kakao.level;
-            }
-        }
-    }, {
-        key: "setMapType",
-        value: function setMapType(type) {
-            this.mapType = type;
-        }
-    }, {
-        key: "setCenter",
-        value: function setCenter(center) {
-            this.center = center;
-        }
-    }, {
-        key: "setProxyUrl",
-        value: function setProxyUrl(proxyUrl) {
-            this.proxyUrl = proxyUrl;
-        }
-    }, {
-        key: "setCompanyType",
-        value: function setCompanyType(companyType) {
-            this.companyType = companyType;
-        }
-    }, {
-        key: "getCompanyType",
-        value: function getCompanyType() {
-            return this.companyType;
-        }
-    }, {
-        key: "getProxyUrl",
-        value: function getProxyUrl() {
-            return this.proxyUrl;
-        }
-    }, {
-        key: "getUrlWithParams",
-        value: function getUrlWithParams() {
-            return this.proxyUrl + this.getQueryString();
-        }
-    }, {
-        key: "getParamsToJson",
-        value: function getParamsToJson() {
-            var jsonData = {
-                layerMode: this.layerMode,
-                lat: this.center.getY(),
-                lng: this.center.getX(),
-                level: this.level,
-                type: this.mapType,
-                companyType: this.companyType
-            };
-
-            return JSON.stringify(jsonData);
-        }
-    }, {
-        key: "getQueryString",
-        value: function getQueryString() {
-            return "?lat=" + this.center.getY() + "&lng=" + this.center.getX() + "&level=" + this.level + "&type=" + this.mapType + "&layerMode=" + this.layerMode + "&companyType=" + this.companyType + "&noLabel=" + this.noLabel;
-        }
-    }]);
-
-    return Proxy;
-}();
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 var Radius = exports.Radius = {
-    // {
-    //  One: {
-    //      sideBlockCount: 11,
-    //      zoom: 18,
-    //      level: 1
-    //    }
-    // }
-    // 이런식으로 변경해도 무방할듯
-    // 
-    // profile 이랑 maps/tile쪽도 간소화 가능해보임
-    // 코드 정리좀
 
     One: {
-        Naver: {
-            sideBlockCount: 11,
-            zoom: 18
-        },
-        Kakao: {
-            level: 1
-            // width: 5000,
-        },
-
-        Google: {
-            level: 1
-            // width:6000,
-        }
-
+        sideBlockCount: 11,
+        zoom: 18,
+        level: 1
     },
+
     Two: {
-        Naver: {
-            sideBlockCount: 17,
-            zoom: 18
-        },
-        Kakao: {
-            level: 2
-            // width: 4000,
-        },
-
-        Google: {
-            level: 2
-            // width:5000,
-        }
-
+        sideBlockCount: 17,
+        zoom: 18,
+        level: 2
     },
+
     Five: {
-        Naver: {
-            sideBlockCount: 11,
-            zoom: 16
-        },
-        Kakao: {
-            level: 5
-            // width: 5000,
-        },
-
-        Google: {
-            level: 5
-            // width:6000,
-        }
-
+        sideBlockCount: 11,
+        zoom: 16,
+        level: 5
     },
     Ten: {
-        Naver: {
-            sideBlockCount: 21,
-            zoom: 16
-        },
-        Kakao: {
-            level: 10
-            // width: 5000,
-        },
-
-        Google: {
-            level: 10
-            // width:6000,
-        }
-
+        sideBlockCount: 21,
+        zoom: 16,
+        level: 10
     }
 
 };
