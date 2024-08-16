@@ -41,8 +41,8 @@ export class Tile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
+        let Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+        let Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
@@ -52,8 +52,8 @@ export class Tile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
+        let Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+        let Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
@@ -63,8 +63,8 @@ export class Tile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
+        let Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+        let Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
@@ -74,8 +74,8 @@ export class Tile {
         this.setLevel(radius);
         this.generate(latlng);
 
-        var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
-        var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
+        let Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+        let Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
