@@ -58,7 +58,7 @@ export class External {
     }
 
     getParamsToJson() {
-        var jsonData = {
+        let jsonData = {
             layerMode: this.layerMode,
             lat: this.center.getY(),
             lng: this.center.getX(),
