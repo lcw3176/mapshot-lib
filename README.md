@@ -94,17 +94,17 @@ tile.draw(latlng, radius, naverProfile, (canvas) => {
 - 이벤트
 ```javascript
 // 이벤트 사용
-document.body.addEventListener("naverTileOnLoadStart", (e) => {
+document.body.addEventListener("mapshotTileOnLoadStart", (e) => {
     // 총 몇장을 캡쳐해 올 것인지 전달 됩니다.
     document.getElementById("progressBar").max = e.detail.total;
 });
 
-document.body.addEventListener("naverTileOnProgress", () => {
+document.body.addEventListener("mapshotTileOnProgress", () => {
     // 각각의 지도 이미지가 로딩되면 발생합니다.
     document.getElementById("progressBar").value += 1;
 });
 
-document.body.addEventListener("naverTileOnError", () => {
+document.body.addEventListener("mapshotTileOnError", () => {
     // 지도 로딩중 에러 발생시 해당 이벤트가 작동됩니다..
     alert("에러 발생");
 });
