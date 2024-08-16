@@ -106,14 +106,15 @@ export class Tile {
         let complete = 0;
         naverProfile.setHeight(1000);
 
-        let naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
+        let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
             detail: {
                 total: total
             }
 
         });
 
-        document.body.dispatchEvent(naverTileOnLoadStartEvent);
+        document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
+
         for (let i = 0; i < sideBlockCount; i++) {
             for (let j = 0; j < sideBlockCount; j++) {
 
@@ -180,14 +181,15 @@ export class Tile {
 
         layerProfile.setHeight(defaultBlockHeight);
 
-        let naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
+        let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
             detail: {
                 total: total
             }
 
         });
 
-        document.body.dispatchEvent(naverTileOnLoadStartEvent);
+        document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
+
         for (let i = 0; i < sideBlockCount; i++) {
             for (let j = 0; j < sideBlockCount; j++) {
 
@@ -236,18 +238,18 @@ export class Tile {
             
             image.onload = function () {
                 ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                let naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
+                let mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
 
-                document.body.dispatchEvent(naverTileOnProgressEvent);
+                document.body.dispatchEvent(mapshotTileOnProgressEvent);
 
                 resolve(true);
             };
     
             image.onerror = function () {
                 if(retryCount >= 1){
-                    let naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
+                    let mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
 
-                    document.body.dispatchEvent(naverTileOnErrorEvent);
+                    document.body.dispatchEvent(mapshotTileOnErrorEvent);
                 }
                 resolve(false);
             };
