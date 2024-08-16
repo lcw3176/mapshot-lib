@@ -207,9 +207,6 @@ export class Tile {
 
         });
 
-        let naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
-        let naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
-
         document.body.dispatchEvent(naverTileOnLoadStartEvent);
         for (let i = 0; i < sideBlockCount; i++) {
             for (let j = 0; j < sideBlockCount; j++) {
@@ -232,10 +229,10 @@ export class Tile {
                 let xPos = (order % sideBlockCount) * canvasBlockSize;
                 let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
                 
-                this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 0)
+                this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 0)
                     .then((result) => {
                         if(!result){
-                            this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 1);
+                            this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 1);
                         }
                     });
 
@@ -251,14 +248,16 @@ export class Tile {
         onSuccess(canvas);
     }
 
-    async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, retryCount) {
+    async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
         return new Promise((resolve) => {
             let image = new Image();
             image.crossOrigin = "*";
             image.src = url;
-
+            
             image.onload = function () {
                 ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
+                let naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
+
                 document.body.dispatchEvent(naverTileOnProgressEvent);
 
                 resolve(true);
@@ -266,6 +265,8 @@ export class Tile {
     
             image.onerror = function () {
                 if(retryCount >= 1){
+                    let naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
+
                     document.body.dispatchEvent(naverTileOnErrorEvent);
                 }
                 resolve(false);
