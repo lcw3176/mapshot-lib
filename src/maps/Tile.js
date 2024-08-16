@@ -85,40 +85,37 @@ export class Tile {
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
 
-        var sideBlockCount = radius.sideBlockCount;
-        var canvas = document.createElement("canvas");
-        var canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+        let sideBlockCount = radius.sideBlockCount;
+        let canvas = document.createElement("canvas");
+        let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
         canvas.width = sideBlockCount * canvasBlockSize;
         canvas.height = sideBlockCount * canvasBlockSize;
 
-        var ctx = canvas.getContext("2d");
-        var temp = this.getNW(radius, centerLatLng);
-        var startLatLng = new LatLng(
+        let ctx = canvas.getContext("2d");
+        let temp = this.getNW(radius, centerLatLng);
+        let startLatLng = new LatLng(
             temp.getX() + this.width / 2,
             temp.getY() - this.noLogoHeight / 2
         );
 
-        var returnXValue = startLatLng.getX();
-        var order = 0;
-        var isCorner = false;
-        var total = sideBlockCount * sideBlockCount;
-        var complete = 0;
+        let returnXValue = startLatLng.getX();
+        let order = 0;
+        let isCorner = false;
+        let total = sideBlockCount * sideBlockCount;
+        let complete = 0;
         naverProfile.setHeight(1000);
 
-        var naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
+        let naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
             detail: {
                 total: total
             }
 
         });
 
-        var naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
-        var naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
-
         document.body.dispatchEvent(naverTileOnLoadStartEvent);
-        for (var i = 0; i < sideBlockCount; i++) {
-            for (var j = 0; j < sideBlockCount; j++) {
+        for (let i = 0; i < sideBlockCount; i++) {
+            for (let j = 0; j < sideBlockCount; j++) {
 
                 if (i + 1 === sideBlockCount && j === 0) {
                     naverProfile.setHeight(1000 - logoRemover);
@@ -128,35 +125,18 @@ export class Tile {
                 }
 
                 naverProfile.setCenter(startLatLng);
+                
+                let xPos = (order % sideBlockCount) * canvasBlockSize;
+                let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
 
-                var image = new Image();
-                image.crossOrigin = "*";
-                image.src = naverProfile.getUrl();
-
-                (function (_order, _image) {
-                    var xPos = (_order % sideBlockCount) * canvasBlockSize;
-                    var yPos = parseInt(_order / sideBlockCount) * canvasBlockSize;
-
-                    _image.onload = function () {
-                        ctx.drawImage(_image, 0, 0, _image.width, defaultBlockHeight - logoRemover, xPos, yPos, canvasBlockSize, canvasBlockSize);
+                this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0)
+                    .then((isSuccess) => {
                         complete++;
-                        document.body.dispatchEvent(naverTileOnProgressEvent);
 
                         if (complete == total) {
                             onSuccess(canvas);
                         }
-                    }
-
-                    _image.onerror = function () {
-                        complete++;
-                        document.body.dispatchEvent(naverTileOnErrorEvent);
-
-                        if (complete == total) {
-                            onSuccess(canvas);
-                        }
-                    }
-
-                })(order, image)
+                    });
 
                 order++;
                 startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
