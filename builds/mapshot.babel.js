@@ -7,11 +7,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var LatLng = exports.LatLng = function () {
-    function LatLng() {
+    function LatLng(lat, lng) {
         _classCallCheck(this, LatLng);
 
         this.x;
         this.y;
+
+        if (lat != undefined && lng != undefined) {
+            this.init(lat, lng);
+        }
     }
 
     _createClass(LatLng, [{
