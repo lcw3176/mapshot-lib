@@ -132,7 +132,9 @@ export class Tile {
 
                 this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0)
                     .then((isSuccess) => {
-                        complete++;
+                        if(isSuccess){
+                            complete++;
+                        }
 
                         if (complete == total) {
                             onSuccess(canvas);
@@ -178,7 +180,7 @@ export class Tile {
         let returnXValue = startLatLng.getX();
         let order = 0;
         let total = sideBlockCount * sideBlockCount;
-
+        let complete = 0;
         layerProfile.setHeight(defaultBlockHeight);
 
         let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
@@ -212,9 +214,15 @@ export class Tile {
                 let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
                 
                 this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 0)
-                    .then((result) => {
-                        if(!result){
+                    .then((isSuccess) => {
+                        if(isSuccess){
+                            complete++;
+                        } else {
                             this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 1);
+                        }   
+
+                        if (complete == total) {
+                            onSuccess(canvas);
                         }
                     });
 
@@ -227,7 +235,6 @@ export class Tile {
             startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
         }
 
-        onSuccess(canvas);
     }
 
     async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
@@ -250,8 +257,10 @@ export class Tile {
                     let mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
 
                     document.body.dispatchEvent(mapshotTileOnErrorEvent);
+                    resolve(true);
+                } else {
+                    resolve(false);
                 }
-                resolve(false);
             };
         });
     }
