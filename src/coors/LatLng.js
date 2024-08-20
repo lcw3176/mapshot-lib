@@ -1,11 +1,7 @@
 export class LatLng {
-    constructor(lat, lng) {
+    constructor() {
         this.x;
         this.y;
-
-        if (lat != undefined && lng != undefined) {
-            this.init(lat, lng)
-        }
     }
 
     init(lat, lng) {
