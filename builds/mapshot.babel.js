@@ -7,15 +7,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var LatLng = exports.LatLng = function () {
-    function LatLng(lat, lng) {
+    function LatLng() {
         _classCallCheck(this, LatLng);
 
         this.x;
         this.y;
-
-        if (lat != undefined && lng != undefined) {
-            this.init(lat, lng);
-        }
     }
 
     _createClass(LatLng, [{
@@ -161,17 +157,15 @@ var Tile = exports.Tile = function () {
             var complete = 0;
             naverProfile.setHeight(1000);
 
-            var naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
+            var mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
                 detail: {
                     total: total
                 }
 
             });
 
-            var naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
-            var naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
+            document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
 
-            document.body.dispatchEvent(naverTileOnLoadStartEvent);
             for (var i = 0; i < sideBlockCount; i++) {
                 for (var j = 0; j < sideBlockCount; j++) {
 
@@ -184,33 +178,16 @@ var Tile = exports.Tile = function () {
 
                     naverProfile.setCenter(startLatLng);
 
-                    var image = new Image();
-                    image.crossOrigin = "*";
-                    image.src = naverProfile.getUrl();
+                    var xPos = order % sideBlockCount * canvasBlockSize;
+                    var yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
 
-                    (function (_order, _image) {
-                        var xPos = _order % sideBlockCount * canvasBlockSize;
-                        var yPos = parseInt(_order / sideBlockCount) * canvasBlockSize;
+                    this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0).then(function (isSuccess) {
+                        complete++;
 
-                        _image.onload = function () {
-                            ctx.drawImage(_image, 0, 0, _image.width, defaultBlockHeight - logoRemover, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                            complete++;
-                            document.body.dispatchEvent(naverTileOnProgressEvent);
-
-                            if (complete == total) {
-                                onSuccess(canvas);
-                            }
-                        };
-
-                        _image.onerror = function () {
-                            complete++;
-                            document.body.dispatchEvent(naverTileOnErrorEvent);
-
-                            if (complete == total) {
-                                onSuccess(canvas);
-                            }
-                        };
-                    })(order, image);
+                        if (complete == total) {
+                            onSuccess(canvas);
+                        }
+                    });
 
                     order++;
                     startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
@@ -254,17 +231,15 @@ var Tile = exports.Tile = function () {
 
             layerProfile.setHeight(defaultBlockHeight);
 
-            var naverTileOnLoadStartEvent = new CustomEvent("naverTileOnLoadStart", {
+            var mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
                 detail: {
                     total: total
                 }
 
             });
 
-            var naverTileOnProgressEvent = new CustomEvent("naverTileOnProgress");
-            var naverTileOnErrorEvent = new CustomEvent("naverTileOnError");
+            document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
 
-            document.body.dispatchEvent(naverTileOnLoadStartEvent);
             for (var i = 0; i < sideBlockCount; i++) {
                 var _loop = async function _loop(j) {
 
@@ -285,9 +260,9 @@ var Tile = exports.Tile = function () {
                     var xPos = order % sideBlockCount * canvasBlockSize;
                     var yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
 
-                    _this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 0).then(function (result) {
+                    _this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 0).then(function (result) {
                         if (!result) {
-                            _this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, 1);
+                            _this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 1);
                         }
                     });
 
@@ -308,7 +283,7 @@ var Tile = exports.Tile = function () {
         }
     }, {
         key: "processImage",
-        value: async function processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, naverTileOnProgressEvent, naverTileOnErrorEvent, retryCount) {
+        value: async function processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
             return new Promise(function (resolve) {
                 var image = new Image();
                 image.crossOrigin = "*";
@@ -316,14 +291,18 @@ var Tile = exports.Tile = function () {
 
                 image.onload = function () {
                     ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                    document.body.dispatchEvent(naverTileOnProgressEvent);
+                    var mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
+
+                    document.body.dispatchEvent(mapshotTileOnProgressEvent);
 
                     resolve(true);
                 };
 
                 image.onerror = function () {
                     if (retryCount >= 1) {
-                        document.body.dispatchEvent(naverTileOnErrorEvent);
+                        var mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
+
+                        document.body.dispatchEvent(mapshotTileOnErrorEvent);
                     }
                     resolve(false);
                 };
