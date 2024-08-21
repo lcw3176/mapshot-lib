@@ -132,11 +132,9 @@ export class Tile {
 
                 this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0)
                     .then((isSuccess) => {
-                        if(isSuccess){
-                            complete++;
-                        }
+                        complete++;
 
-                        if (complete == total) {
+                        if (complete >= total) {
                             onSuccess(canvas);
                         }
                     });
@@ -215,13 +213,9 @@ export class Tile {
                 
                 this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 0)
                     .then((isSuccess) => {
-                        if(isSuccess){
-                            complete++;
-                        } else {
-                            this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 1);
-                        }   
+                        complete++;
 
-                        if (complete == total) {
+                        if (complete >= total) {
                             onSuccess(canvas);
                         }
                     });
@@ -259,7 +253,7 @@ export class Tile {
                     document.body.dispatchEvent(mapshotTileOnErrorEvent);
                     resolve(true);
                 } else {
-                    resolve(false);
+                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount + 1));
                 }
             };
         });
