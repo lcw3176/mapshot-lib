@@ -80,6 +80,7 @@ export class Tile {
         return new LatLng(Lat, Lng);
     }
 
+    // 각 프로필로 위임하는 방식으로 해볼까? 
     async draw(centerLatLng, radius, naverProfile, onSuccess) {
         this.setLevel(radius);
         const defaultBlockHeight = 1000;
