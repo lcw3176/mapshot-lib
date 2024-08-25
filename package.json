@@ -19,12 +19,10 @@
   },
   "homepage": "https://github.com/lcw3176/mapshot-lib#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "javascript-obfuscator": "^3.0.0"
-  },
-  "dependencies": {
-    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
-    "babel-preset-env": "^1.7.0"
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.8",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/cli": "^7.24.8",
+    "javascript-obfuscator": "^4.1.1"
   }
 }

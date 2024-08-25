@@ -128,68 +128,104 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
       var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
       return new LatLng(Lat, Lng);
     }
+
+    // 각 프로필로 위임하는 방식으로 해볼까? 
   }, {
     key: "draw",
-    value: function draw(centerLatLng, radius, naverProfile, onSuccess) {
-      this.setLevel(radius);
-      var defaultBlockHeight = 1000;
-      var logoRemover = 27;
-      var sideBlockCount = radius.sideBlockCount;
-      var canvas = document.createElement("canvas");
-      var canvasBlockSize = sideBlockCount <= 11 ? 1000 : 500;
-      canvas.width = sideBlockCount * canvasBlockSize;
-      canvas.height = sideBlockCount * canvasBlockSize;
-      var ctx = canvas.getContext("2d");
-      var temp = this.getNW(radius, centerLatLng);
-      var startLatLng = new LatLng(temp.getX() + this.width / 2, temp.getY() - this.noLogoHeight / 2);
-      var returnXValue = startLatLng.getX();
-      var order = 0;
-      var isCorner = false;
-      var total = sideBlockCount * sideBlockCount;
-      var complete = 0;
-      naverProfile.setHeight(1000);
-      var mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
-        detail: {
-          total: total
-        }
-      });
-      document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
-      for (var i = 0; i < sideBlockCount; i++) {
-        for (var j = 0; j < sideBlockCount; j++) {
-          if (i + 1 === sideBlockCount && j === 0) {
-            naverProfile.setHeight(1000 - logoRemover);
-            startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
-            startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
-            isCorner = true;
+    value: function () {
+      var _draw = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(centerLatLng, radius, naverProfile, onSuccess) {
+        var defaultBlockHeight, logoRemover, sideBlockCount, canvas, canvasBlockSize, ctx, temp, startLatLng, returnXValue, order, isCorner, total, complete, mapshotTileOnLoadStartEvent, i, j, xPos, yPos;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              this.setLevel(radius);
+              defaultBlockHeight = 1000;
+              logoRemover = 27;
+              sideBlockCount = radius.sideBlockCount;
+              canvas = document.createElement("canvas");
+              canvasBlockSize = sideBlockCount <= 11 ? 1000 : 500;
+              canvas.width = sideBlockCount * canvasBlockSize;
+              canvas.height = sideBlockCount * canvasBlockSize;
+              ctx = canvas.getContext("2d");
+              temp = this.getNW(radius, centerLatLng);
+              startLatLng = new LatLng(temp.getX() + this.width / 2, temp.getY() - this.noLogoHeight / 2);
+              returnXValue = startLatLng.getX();
+              order = 0;
+              isCorner = false;
+              total = sideBlockCount * sideBlockCount;
+              complete = 0;
+              naverProfile.setHeight(1000);
+              mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
+                detail: {
+                  total: total
+                }
+              });
+              document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
+              i = 0;
+            case 20:
+              if (!(i < sideBlockCount)) {
+                _context.next = 40;
+                break;
+              }
+              j = 0;
+            case 22:
+              if (!(j < sideBlockCount)) {
+                _context.next = 36;
+                break;
+              }
+              if (i + 1 === sideBlockCount && j === 0) {
+                naverProfile.setHeight(1000 - logoRemover);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
+                isCorner = true;
+              }
+              naverProfile.setCenter(startLatLng);
+              xPos = order % sideBlockCount * canvasBlockSize;
+              yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
+              this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0).then(function (isSuccess) {
+                complete++;
+                if (complete >= total) {
+                  onSuccess(canvas);
+                }
+              });
+              order++;
+              startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
+              if (isCorner) {
+                naverProfile.setHeight(1000);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
+                isCorner = false;
+              }
+              _context.next = 33;
+              return this.delay(100);
+            case 33:
+              j++;
+              _context.next = 22;
+              break;
+            case 36:
+              startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
+            case 37:
+              i++;
+              _context.next = 20;
+              break;
+            case 40:
+            case "end":
+              return _context.stop();
           }
-          naverProfile.setCenter(startLatLng);
-          var xPos = order % sideBlockCount * canvasBlockSize;
-          var yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
-          this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0).then(function (isSuccess) {
-            complete++;
-            if (complete >= total) {
-              onSuccess(canvas);
-            }
-          });
-          order++;
-          startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
-          if (isCorner) {
-            naverProfile.setHeight(1000);
-            startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
-            startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
-            isCorner = false;
-          }
-        }
-        startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
+        }, _callee, this);
+      }));
+      function draw(_x, _x2, _x3, _x4) {
+        return _draw.apply(this, arguments);
       }
-    }
+      return draw;
+    }()
   }, {
     key: "drawLayers",
     value: function () {
-      var _drawLayers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(centerLatLng, radius, layerProfile, canvas, onSuccess) {
+      var _drawLayers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(centerLatLng, radius, layerProfile, canvas, onSuccess) {
         var defaultBlockHeight, sideBlockCount, canvasBlockSize, ctx, temp, startLatLng, returnXValue, order, total, complete, mapshotTileOnLoadStartEvent, i, j, offsetY, offsetX, yMin, xMin, yMax, xMax, xPos, yPos;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
             case 0:
               this.setLevel(radius);
               defaultBlockHeight = 1000;
@@ -217,13 +253,13 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
               i = 0;
             case 16:
               if (!(i < sideBlockCount)) {
-                _context.next = 43;
+                _context2.next = 43;
                 break;
               }
               j = 0;
             case 18:
               if (!(j < sideBlockCount)) {
-                _context.next = 39;
+                _context2.next = 39;
                 break;
               }
               offsetY = this.noLogoHeight / 2;
@@ -246,25 +282,25 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
               });
               order++;
               startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
-              _context.next = 36;
-              return this.delay(50);
+              _context2.next = 36;
+              return this.delay(100);
             case 36:
               j++;
-              _context.next = 18;
+              _context2.next = 18;
               break;
             case 39:
               startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
             case 40:
               i++;
-              _context.next = 16;
+              _context2.next = 16;
               break;
             case 43:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
-      function drawLayers(_x, _x2, _x3, _x4, _x5) {
+      function drawLayers(_x5, _x6, _x7, _x8, _x9) {
         return _drawLayers.apply(this, arguments);
       }
       return drawLayers;
@@ -272,11 +308,11 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "processImage",
     value: function () {
-      var _processImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
+      var _processImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              return _context2.abrupt("return", new Promise(function (resolve) {
+              return _context3.abrupt("return", new Promise(function (resolve) {
                 var image = new Image();
                 image.crossOrigin = "*";
                 image.src = url;
@@ -298,11 +334,11 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
               }));
             case 1:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
-        }, _callee2);
+        }, _callee3);
       }));
-      function processImage(_x6, _x7, _x8, _x9, _x10, _x11, _x12) {
+      function processImage(_x10, _x11, _x12, _x13, _x14, _x15, _x16) {
         return _processImage.apply(this, arguments);
       }
       return processImage;
