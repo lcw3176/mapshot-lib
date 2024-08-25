@@ -80,7 +80,7 @@ export class Tile {
         return new LatLng(Lat, Lng);
     }
 
-    draw(centerLatLng, radius, naverProfile, onSuccess) {
+    async draw(centerLatLng, radius, naverProfile, onSuccess) {
         this.setLevel(radius);
         const defaultBlockHeight = 1000;
         const logoRemover = 27;
@@ -148,6 +148,8 @@ export class Tile {
                     startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
                     isCorner = false;
                 }
+
+                await this.delay(100);
             }
 
             startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
@@ -223,7 +225,7 @@ export class Tile {
                 order++;
                 startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
                 
-                await this.delay(50);
+                await this.delay(100);
             }
 
             startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
