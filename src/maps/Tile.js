@@ -18,7 +18,7 @@ export class Tile {
 
     }
 
-    setLevel(radius) {
+    refineValues(radius) {
 
         if (radius.zoom === Radius.One.zoom || radius.zoom === Radius.Two.zoom) {
             this.correctFix = 0.00002833;
@@ -38,7 +38,7 @@ export class Tile {
 
 
     getSE(radius, latlng) {
-        this.setLevel(radius);
+        this.refineValues(radius);
         this.generate(latlng);
 
         let Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
@@ -49,7 +49,7 @@ export class Tile {
 
 
     getSW(radius, latlng) {
-        this.setLevel(radius);
+        this.refineValues(radius);
         this.generate(latlng);
 
         let Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
@@ -60,7 +60,7 @@ export class Tile {
 
 
     getNE(radius, latlng) {
-        this.setLevel(radius);
+        this.refineValues(radius);
         this.generate(latlng);
 
         let Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
@@ -71,7 +71,7 @@ export class Tile {
 
 
     getNW(radius, latlng) {
-        this.setLevel(radius);
+        this.refineValues(radius);
         this.generate(latlng);
 
         let Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
@@ -80,89 +80,15 @@ export class Tile {
         return new LatLng(Lat, Lng);
     }
 
-    // 각 프로필로 위임하는 방식으로 해볼까? 
-    async draw(centerLatLng, radius, naverProfile, onSuccess) {
-        this.setLevel(radius);
-        const defaultBlockHeight = 1000;
-        const logoRemover = 27;
-
-        let sideBlockCount = radius.sideBlockCount;
-        let canvas = document.createElement("canvas");
-        let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
-
-        canvas.width = sideBlockCount * canvasBlockSize;
-        canvas.height = sideBlockCount * canvasBlockSize;
-
-        let ctx = canvas.getContext("2d");
-        let temp = this.getNW(radius, centerLatLng);
-        let startLatLng = new LatLng(
-            temp.getX() + this.width / 2,
-            temp.getY() - this.noLogoHeight / 2
-        );
-
-        let returnXValue = startLatLng.getX();
-        let order = 0;
-        let isCorner = false;
-        let total = sideBlockCount * sideBlockCount;
-        let complete = 0;
-        naverProfile.setHeight(1000);
-
-        let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
-            detail: {
-                total: total
-            }
-
-        });
-
-        document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
-
-        for (let i = 0; i < sideBlockCount; i++) {
-            for (let j = 0; j < sideBlockCount; j++) {
-
-                if (i + 1 === sideBlockCount && j === 0) {
-                    naverProfile.setHeight(1000 - logoRemover);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
-                    isCorner = true;
-                }
-
-                naverProfile.setCenter(startLatLng);
-                
-                let xPos = (order % sideBlockCount) * canvasBlockSize;
-                let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
-
-                this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0)
-                    .then((isSuccess) => {
-                        complete++;
-
-                        if (complete >= total) {
-                            onSuccess(canvas);
-                        }
-                    });
-
-                order++;
-                startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
-
-                if (isCorner) {
-                    naverProfile.setHeight(1000);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
-                    isCorner = false;
-                }
-
-                await this.delay(100);
-            }
-
-            startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
-        }
-    }
 
     async drawLayers(centerLatLng, radius, layerProfile, canvas, onSuccess) {
-        this.setLevel(radius);
+        // this.refineValues(radius);
         const defaultBlockHeight = 1000;
  
-        let sideBlockCount = radius.sideBlockCount;
-        let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+        // let sideBlockCount = radius.sideBlockCount;
+        // let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+        
+        let canvasBlockSize = defaultBlockHeight;
 
         if(canvas == null){
             canvas = document.createElement("canvas");
