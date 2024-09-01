@@ -25,7 +25,7 @@ import { LatLng } from "../assets/js/mapshot.min.js";
 // init으로 기존 좌표 변경이 가능합니다.
 
 let latlng = new LatLng(37.5642135, 127.0016985);
-latlng.init(127.0016985, 37.5642135) ;
+latlng.init(37.5642135, 127.0016985) ;
 
 // 좌표 가져오기
 // getX(): 경도, getY(): 위도
