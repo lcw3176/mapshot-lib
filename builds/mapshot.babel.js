@@ -76,8 +76,8 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
       this.withLogoHeight = this.withLogoValue + (controlPoint - latlng.getY()) * this.correctFix;
     }
   }, {
-    key: "setLevel",
-    value: function setLevel(radius) {
+    key: "refineValues",
+    value: function refineValues(radius) {
       if (radius.zoom === Radius.One.zoom || radius.zoom === Radius.Two.zoom) {
         this.correctFix = 0.00002833;
         this.width = 0.00268;
@@ -95,7 +95,7 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getSE",
     value: function getSE(radius, latlng) {
-      this.setLevel(radius);
+      this.refineValues(radius);
       this.generate(latlng);
       var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
       var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
@@ -104,7 +104,7 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getSW",
     value: function getSW(radius, latlng) {
-      this.setLevel(radius);
+      this.refineValues(radius);
       this.generate(latlng);
       var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
       var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
@@ -113,7 +113,7 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getNE",
     value: function getNE(radius, latlng) {
-      this.setLevel(radius);
+      this.refineValues(radius);
       this.generate(latlng);
       var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
       var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
@@ -122,185 +122,77 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getNW",
     value: function getNW(radius, latlng) {
-      this.setLevel(radius);
+      this.refineValues(radius);
       this.generate(latlng);
       var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
       var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
       return new LatLng(Lat, Lng);
     }
-
-    // 각 프로필로 위임하는 방식으로 해볼까? 
   }, {
-    key: "draw",
+    key: "drawLayers",
     value: function () {
-      var _draw = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(centerLatLng, radius, naverProfile, onSuccess) {
-        var defaultBlockHeight, logoRemover, sideBlockCount, canvas, canvasBlockSize, ctx, temp, startLatLng, returnXValue, order, isCorner, total, complete, mapshotTileOnLoadStartEvent, i, j, xPos, yPos;
+      var _drawLayers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(centerLatLng, nwLatLng, canvas, width, layerProfile) {
+        var defaultBlockHeight, heightOffset, widthOffset, ctx, startLatLng, sideBlockCount, fisrtXValue, order, i, j, yMin, xMin, yMax, xMax, xPos, yPos;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              this.setLevel(radius);
-              defaultBlockHeight = 1000;
-              logoRemover = 27;
-              sideBlockCount = radius.sideBlockCount;
-              canvas = document.createElement("canvas");
-              canvasBlockSize = sideBlockCount <= 11 ? 1000 : 500;
-              canvas.width = sideBlockCount * canvasBlockSize;
-              canvas.height = sideBlockCount * canvasBlockSize;
+              defaultBlockHeight = 500;
+              canvas.width = width;
+              canvas.height = width;
+              heightOffset = (nwLatLng.getY() - centerLatLng.getY()) * 2 / (width / defaultBlockHeight) / 2;
+              widthOffset = (centerLatLng.getX() - nwLatLng.getX()) * 2 / (width / defaultBlockHeight) / 2;
               ctx = canvas.getContext("2d");
-              temp = this.getNW(radius, centerLatLng);
-              startLatLng = new LatLng(temp.getX() + this.width / 2, temp.getY() - this.noLogoHeight / 2);
-              returnXValue = startLatLng.getX();
+              startLatLng = new LatLng(nwLatLng.getY() - heightOffset, nwLatLng.getX() + widthOffset);
+              sideBlockCount = width / defaultBlockHeight;
+              fisrtXValue = startLatLng.getX();
               order = 0;
-              isCorner = false;
-              total = sideBlockCount * sideBlockCount;
-              complete = 0;
-              naverProfile.setHeight(1000);
-              mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
-                detail: {
-                  total: total
-                }
-              });
-              document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
+              layerProfile.setHeight(defaultBlockHeight);
               i = 0;
-            case 20:
+            case 12:
               if (!(i < sideBlockCount)) {
-                _context.next = 40;
+                _context.next = 38;
                 break;
               }
               j = 0;
-            case 22:
+            case 14:
               if (!(j < sideBlockCount)) {
-                _context.next = 36;
+                _context.next = 34;
                 break;
               }
-              if (i + 1 === sideBlockCount && j === 0) {
-                naverProfile.setHeight(1000 - logoRemover);
-                startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
-                startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
-                isCorner = true;
-              }
-              naverProfile.setCenter(startLatLng);
-              xPos = order % sideBlockCount * canvasBlockSize;
-              yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
-              this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0).then(function (isSuccess) {
-                complete++;
-                if (complete >= total) {
-                  onSuccess(canvas);
-                }
-              });
+              yMin = startLatLng.getY() - heightOffset;
+              xMin = startLatLng.getX() - widthOffset;
+              yMax = startLatLng.getY() + heightOffset;
+              xMax = startLatLng.getX() + widthOffset;
+              layerProfile.setYMin(yMin);
+              layerProfile.setXMin(xMin);
+              layerProfile.setYMax(yMax);
+              layerProfile.setXMax(xMax);
+              xPos = order % sideBlockCount * defaultBlockHeight;
+              yPos = parseInt(order / sideBlockCount) * defaultBlockHeight;
+              _context.next = 27;
+              return this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, ctx, 0);
+            case 27:
               order++;
-              startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
-              if (isCorner) {
-                naverProfile.setHeight(1000);
-                startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
-                startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
-                isCorner = false;
-              }
-              _context.next = 33;
+              startLatLng.init(startLatLng.getX() + widthOffset * 2, startLatLng.getY());
+              _context.next = 31;
               return this.delay(100);
-            case 33:
+            case 31:
               j++;
-              _context.next = 22;
+              _context.next = 14;
               break;
-            case 36:
-              startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
-            case 37:
+            case 34:
+              startLatLng.init(fisrtXValue, startLatLng.getY() - heightOffset * 2);
+            case 35:
               i++;
-              _context.next = 20;
+              _context.next = 12;
               break;
-            case 40:
+            case 38:
             case "end":
               return _context.stop();
           }
         }, _callee, this);
       }));
-      function draw(_x, _x2, _x3, _x4) {
-        return _draw.apply(this, arguments);
-      }
-      return draw;
-    }()
-  }, {
-    key: "drawLayers",
-    value: function () {
-      var _drawLayers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(centerLatLng, radius, layerProfile, canvas, onSuccess) {
-        var defaultBlockHeight, sideBlockCount, canvasBlockSize, ctx, temp, startLatLng, returnXValue, order, total, complete, mapshotTileOnLoadStartEvent, i, j, offsetY, offsetX, yMin, xMin, yMax, xMax, xPos, yPos;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              this.setLevel(radius);
-              defaultBlockHeight = 1000;
-              sideBlockCount = radius.sideBlockCount;
-              canvasBlockSize = sideBlockCount <= 11 ? 1000 : 500;
-              if (canvas == null) {
-                canvas = document.createElement("canvas");
-                canvas.width = sideBlockCount * canvasBlockSize;
-                canvas.height = sideBlockCount * canvasBlockSize;
-              }
-              ctx = canvas.getContext("2d");
-              temp = this.getNW(radius, centerLatLng);
-              startLatLng = new LatLng(temp.getX() + this.width / 2, temp.getY() - this.noLogoHeight / 2);
-              returnXValue = startLatLng.getX();
-              order = 0;
-              total = sideBlockCount * sideBlockCount;
-              complete = 0;
-              layerProfile.setHeight(defaultBlockHeight);
-              mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
-                detail: {
-                  total: total
-                }
-              });
-              document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
-              i = 0;
-            case 16:
-              if (!(i < sideBlockCount)) {
-                _context2.next = 43;
-                break;
-              }
-              j = 0;
-            case 18:
-              if (!(j < sideBlockCount)) {
-                _context2.next = 39;
-                break;
-              }
-              offsetY = this.noLogoHeight / 2;
-              offsetX = this.width / 2;
-              yMin = startLatLng.getY() - offsetY;
-              xMin = startLatLng.getX() - offsetX;
-              yMax = startLatLng.getY() + offsetY;
-              xMax = startLatLng.getX() + offsetX;
-              layerProfile.setYMin(yMin);
-              layerProfile.setXMin(xMin);
-              layerProfile.setYMax(yMax);
-              layerProfile.setXMax(xMax);
-              xPos = order % sideBlockCount * canvasBlockSize;
-              yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
-              this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 0).then(function (isSuccess) {
-                complete++;
-                if (complete >= total) {
-                  onSuccess(canvas);
-                }
-              });
-              order++;
-              startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
-              _context2.next = 36;
-              return this.delay(100);
-            case 36:
-              j++;
-              _context2.next = 18;
-              break;
-            case 39:
-              startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
-            case 40:
-              i++;
-              _context2.next = 16;
-              break;
-            case 43:
-            case "end":
-              return _context2.stop();
-          }
-        }, _callee2, this);
-      }));
-      function drawLayers(_x5, _x6, _x7, _x8, _x9) {
+      function drawLayers(_x, _x2, _x3, _x4, _x5) {
         return _drawLayers.apply(this, arguments);
       }
       return drawLayers;
@@ -308,37 +200,33 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "processImage",
     value: function () {
-      var _processImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
+      var _processImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(url, xPos, yPos, defaultBlockHeight, ctx, retryCount) {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              return _context3.abrupt("return", new Promise(function (resolve) {
+              return _context2.abrupt("return", new Promise(function (resolve) {
                 var image = new Image();
                 image.crossOrigin = "*";
                 image.src = url;
                 image.onload = function () {
-                  ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                  var mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
-                  document.body.dispatchEvent(mapshotTileOnProgressEvent);
+                  ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, defaultBlockHeight, defaultBlockHeight);
                   resolve(true);
                 };
                 image.onerror = function () {
                   if (retryCount >= 1) {
-                    var mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
-                    document.body.dispatchEvent(mapshotTileOnErrorEvent);
                     resolve(true);
                   } else {
-                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount + 1));
+                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, ctx, retryCount + 1));
                   }
                 };
               }));
             case 1:
             case "end":
-              return _context3.stop();
+              return _context2.stop();
           }
-        }, _callee3);
+        }, _callee2);
       }));
-      function processImage(_x10, _x11, _x12, _x13, _x14, _x15, _x16) {
+      function processImage(_x6, _x7, _x8, _x9, _x10, _x11) {
         return _processImage.apply(this, arguments);
       }
       return processImage;
@@ -349,109 +237,6 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
       return new Promise(function (resolve) {
         setTimeout(resolve, millis);
       });
-    }
-  }]);
-}();
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.External = void 0;
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-var External = exports.External = /*#__PURE__*/function () {
-  function External() {
-    _classCallCheck(this, External);
-    this.center;
-    this.level;
-    this.mapType;
-    this.proxyUrl;
-    this.layerMode = false;
-    this.companyType;
-    this.noLabel = false;
-  }
-  return _createClass(External, [{
-    key: "setLayerMode",
-    value: function setLayerMode(mode) {
-      this.layerMode = mode;
-    }
-  }, {
-    key: "isLayerMode",
-    value: function isLayerMode() {
-      return this.layerMode;
-    }
-  }, {
-    key: "setNoLabel",
-    value: function setNoLabel(mode) {
-      this.noLabel = mode;
-    }
-  }, {
-    key: "isNoLabel",
-    value: function isNoLabel() {
-      return this.noLabel;
-    }
-  }, {
-    key: "setRadius",
-    value: function setRadius(radius) {
-      this.level = radius.level;
-    }
-  }, {
-    key: "setMapType",
-    value: function setMapType(type) {
-      this.mapType = type;
-    }
-  }, {
-    key: "setCenter",
-    value: function setCenter(center) {
-      this.center = center;
-    }
-  }, {
-    key: "setProxyUrl",
-    value: function setProxyUrl(proxyUrl) {
-      this.proxyUrl = proxyUrl;
-    }
-  }, {
-    key: "setCompanyType",
-    value: function setCompanyType(companyType) {
-      this.companyType = companyType;
-    }
-  }, {
-    key: "getCompanyType",
-    value: function getCompanyType() {
-      return this.companyType;
-    }
-  }, {
-    key: "getProxyUrl",
-    value: function getProxyUrl() {
-      return this.proxyUrl;
-    }
-  }, {
-    key: "getUrlWithParams",
-    value: function getUrlWithParams() {
-      return this.proxyUrl + this.getQueryString();
-    }
-  }, {
-    key: "getParamsToJson",
-    value: function getParamsToJson() {
-      var jsonData = {
-        layerMode: this.layerMode,
-        lat: this.center.getY(),
-        lng: this.center.getX(),
-        level: this.level,
-        type: this.mapType,
-        companyType: this.companyType
-      };
-      return JSON.stringify(jsonData);
-    }
-  }, {
-    key: "getQueryString",
-    value: function getQueryString() {
-      return "?lat=" + this.center.getY() + "&lng=" + this.center.getX() + "&level=" + this.level + "&type=" + this.mapType + "&layerMode=" + this.layerMode + "&companyType=" + this.companyType + "&noLabel=" + this.noLabel;
     }
   }]);
 }();
@@ -522,59 +307,6 @@ var Layer = exports.Layer = /*#__PURE__*/function () {
     key: "getUrl",
     value: function getUrl() {
       return this.url + "?layer=" + this.layers.join() + "&ymin=" + this.yMin + "&xmin=" + this.xMin + "&ymax=" + this.yMax + "&xmax=" + this.xMax + "&height=" + this.height;
-    }
-  }]);
-}();
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Naver = void 0;
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-var Naver = exports.Naver = /*#__PURE__*/function () {
-  function Naver() {
-    _classCallCheck(this, Naver);
-    this.mapType;
-    this.center;
-    this.level;
-    this.key;
-    this.height;
-  }
-  return _createClass(Naver, [{
-    key: "setMapType",
-    value: function setMapType(param) {
-      this.mapType = param;
-    }
-  }, {
-    key: "setCenter",
-    value: function setCenter(param) {
-      this.center = param;
-    }
-  }, {
-    key: "setLevel",
-    value: function setLevel(radius) {
-      this.level = radius.zoom;
-    }
-  }, {
-    key: "setKey",
-    value: function setKey(param) {
-      this.key = param;
-    }
-  }, {
-    key: "setHeight",
-    value: function setHeight(param) {
-      this.height = param;
-    }
-  }, {
-    key: "getUrl",
-    value: function getUrl() {
-      return "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?" + "w=1000" + "&h=" + this.height + "&center=" + this.center.getX() + "," + this.center.getY() + "&level=" + this.level + "&X-NCP-APIGW-API-KEY-ID=" + this.key + "&maptype=" + this.mapType;
     }
   }]);
 }();
