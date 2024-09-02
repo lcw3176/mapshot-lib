@@ -81,55 +81,33 @@ export class Tile {
     }
 
 
-    async drawLayers(centerLatLng, radius, layerProfile, canvas, onSuccess) {
-        // this.refineValues(radius);
-        const defaultBlockHeight = 1000;
+    async drawLayers(centerLatLng, nwLatLng, canvas, width, layerProfile) {
+        const defaultBlockHeight = 500;
  
-        // let sideBlockCount = radius.sideBlockCount;
-        // let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+        canvas.width = width;
+        canvas.height = width;
+
+        let heightOffset =  (((nwLatLng.getY() - centerLatLng.getY()) * 2) / (width / defaultBlockHeight)) / 2;
+        let widthOffset =  (((centerLatLng.getX() - nwLatLng.getX()) * 2) / (width / defaultBlockHeight)) / 2;
         
-        let canvasBlockSize = defaultBlockHeight;
-
-        if(canvas == null){
-            canvas = document.createElement("canvas");
-
-            canvas.width = sideBlockCount * canvasBlockSize;
-            canvas.height = sideBlockCount * canvasBlockSize;
-        }
-
         let ctx = canvas.getContext("2d");
-        let temp = this.getNW(radius, centerLatLng);
         let startLatLng = new LatLng(
-            temp.getX() + this.width / 2,
-            temp.getY() - this.noLogoHeight / 2
+            nwLatLng.getY() - heightOffset,
+            nwLatLng.getX() + widthOffset,
         );
 
-        let returnXValue = startLatLng.getX();
+        let sideBlockCount = width / defaultBlockHeight;
+        let fisrtXValue = startLatLng.getX();
         let order = 0;
-        let total = sideBlockCount * sideBlockCount;
-        let complete = 0;
         layerProfile.setHeight(defaultBlockHeight);
-
-        let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
-            detail: {
-                total: total
-            }
-
-        });
-
-        document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
 
         for (let i = 0; i < sideBlockCount; i++) {
             for (let j = 0; j < sideBlockCount; j++) {
+                let yMin = startLatLng.getY() - heightOffset;
+                let xMin = startLatLng.getX() - widthOffset;
 
-                let offsetY = this.noLogoHeight / 2;
-                let offsetX = this.width / 2;
-
-                let yMin = startLatLng.getY() - offsetY;
-                let xMin = startLatLng.getX() - offsetX;
-
-                let yMax = startLatLng.getY() + offsetY;
-                let xMax = startLatLng.getX() + offsetX;
+                let yMax = startLatLng.getY() + heightOffset;
+                let xMax = startLatLng.getX() + widthOffset;
 
 
                 layerProfile.setYMin(yMin);
@@ -137,52 +115,38 @@ export class Tile {
                 layerProfile.setYMax(yMax);
                 layerProfile.setXMax(xMax);
                 
-                let xPos = (order % sideBlockCount) * canvasBlockSize;
-                let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
+                let xPos = (order % sideBlockCount) * defaultBlockHeight;
+                let yPos = parseInt(order / sideBlockCount) * defaultBlockHeight;
                 
-                this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, 0)
-                    .then((isSuccess) => {
-                        complete++;
-
-                        if (complete >= total) {
-                            onSuccess(canvas);
-                        }
-                    });
+                await this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, ctx, 0);
 
                 order++;
-                startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
+                startLatLng.init(startLatLng.getX() + widthOffset * 2, startLatLng.getY());
                 
                 await this.delay(100);
             }
 
-            startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
+            startLatLng.init(fisrtXValue, startLatLng.getY() - heightOffset * 2);
         }
 
     }
 
-    async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
+    async processImage(url, xPos, yPos, defaultBlockHeight, ctx, retryCount) {
         return new Promise((resolve) => {
             let image = new Image();
             image.crossOrigin = "*";
             image.src = url;
             
             image.onload = function () {
-                ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                let mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
-
-                document.body.dispatchEvent(mapshotTileOnProgressEvent);
-
+                ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, defaultBlockHeight, defaultBlockHeight);
                 resolve(true);
             };
     
             image.onerror = function () {
                 if(retryCount >= 1){
-                    let mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
-
-                    document.body.dispatchEvent(mapshotTileOnErrorEvent);
                     resolve(true);
                 } else {
-                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount + 1));
+                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, ctx, retryCount + 1));
                 }
             };
         });
