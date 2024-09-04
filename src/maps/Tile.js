@@ -1,6 +1,6 @@
 export class Tile {
     constructor() {
-
+        this.imageHeight = 1000;
     }
 
     
@@ -44,44 +44,36 @@ export class Tile {
     }
 
 
-    async drawLayers(neLat, neLng, swLat, swLng, canvas, templateWidth, layerProfile) {
-        canvas.width = templateWidth * 2;
-        canvas.height = templateWidth * 2;
+    async drawLayers(ne, sw, center, canvas, templateWidth, layerProfile) {
+        canvas.width = templateWidth;
+        canvas.height = templateWidth;
 
         let ctx = canvas.getContext("2d");
    
         
-        let radiusMeter = this.calculateRadiusFromBounds(swLat, swLng, neLat, neLng);
+        let radiusMeter = this.calculateRadiusFromBounds(sw.getY(), sw.getX(), ne.getY(), ne.getX()); 
+        let fixedCoord = this.getBoundingBox(center.getY(), center.getX(), radiusMeter)
+        const tiles = this.generateTilesByBounds(fixedCoord.latMin, fixedCoord.lngMin, fixedCoord.latMax, fixedCoord.lngMax, templateWidth);
 
-        const defaultBlockCount = 2;
-        const defaultBlockRangeMeter = radiusMeter / defaultBlockCount;
+        layerProfile.setHeight(this.imageHeight);
 
-        const tiles = this.generateTilesByBounds(swLat, swLng, neLat, neLng, defaultBlockRangeMeter);
-
-        layerProfile.setHeight(Math.floor(defaultBlockRangeMeter / 2));
-
-        console.log("지름", defaultBlockRangeMeter);
-        
         let index = 0;
-
-        // 결과 출력
+        
         for(const tile of tiles) {
 
-            let value = this.getBoundingBox(tile.lat, tile.lng, defaultBlockRangeMeter / 2)
+            layerProfile.setYMin(tile.latMin);
+            layerProfile.setXMin(tile.lngMin);
+            layerProfile.setYMax(tile.latMax);
+            layerProfile.setXMax(tile.lngMax);
 
-            layerProfile.setYMin(value.latMin);
-            layerProfile.setXMin(value.lngMin);
-            layerProfile.setYMax(value.latMax);
-            layerProfile.setXMax(value.lngMax);
+            let xPos = parseInt(index * this.imageHeight % templateWidth);
+            let yPos = parseInt(index * this.imageHeight / templateWidth) * this.imageHeight;
             
 
-            let xPos = (index % (defaultBlockCount * 2)) * defaultBlockRangeMeter;
-            let yPos = parseInt(index / (defaultBlockCount * 2)) * defaultBlockRangeMeter;
-            
-            let success = await this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockRangeMeter, ctx, 0);
+            let success = await this.processImage(layerProfile.getUrl(), xPos, yPos, this.imageHeight, ctx);
 
             if(!success){
-                await this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockRangeMeter, ctx, 1);
+                await this.processImage(layerProfile.getUrl(), xPos, yPos, this.imageHeight, ctx);
             }
 
             await this.delay(100);
@@ -90,12 +82,13 @@ export class Tile {
 
     }
 
-    async processImage(url, xPos, yPos, defaultBlockHeight, ctx, retryCount) {
+    async processImage(url, xPos, yPos, defaultBlockHeight, ctx) {
         return new Promise((resolve) => {
             let image = new Image();
             image.crossOrigin = "*";
             image.src = url;
             
+            console.log(xPos, yPos, defaultBlockHeight);
             image.onload = function () {
                 ctx.drawImage(image, xPos, yPos, defaultBlockHeight, defaultBlockHeight);
                 resolve(true);
@@ -107,39 +100,55 @@ export class Tile {
         });
     }
 
-    generateTilesByBounds(latMin, lonMin, latMax, lonMax, tileSize) {
-        // 중심점과 경계의 좌표를 EPSG:3857로 변환
-        const boundsMin = this.latLonToMercator(latMin, lonMin);
-        const boundsMax = this.latLonToMercator(latMax, lonMax);
+
+    generateTilesByBounds(latMin, lngMin, latMax, lngMax, templateWidth) {
+        let divide = templateWidth / this.imageHeight;
+
+        const boundsMin = this.latLonToMercator(latMin, lngMin);
+        const boundsMax = this.latLonToMercator(latMax, lngMax);
+
+        let latOffset = (boundsMax.y - boundsMin.y) / divide;
+        let lngOffset = (boundsMax.x - boundsMin.x) / divide;
+
+        let startLat = boundsMax.y - latOffset / 2;
+        let startLng = boundsMin.x + lngOffset / 2;
+     
+        let movingLat = startLat;
+        let movingLng = startLng;
 
         const tiles = [];
 
-        // X 방향 타일 수 계산 (왼쪽에서 오른쪽)
-        const numXTiles = Math.ceil((boundsMax.x - boundsMin.x) / tileSize);
-        // Y 방향 타일 수 계산 (위쪽에서 아래쪽)
-        const numYTiles = Math.ceil((boundsMax.y - boundsMin.y) / tileSize);
+        for (let y = 0; y < divide; y++) {
+            for (let x = 0; x < divide; x++) {
+                
+                const tileMinLat = movingLat - latOffset / 2;
+                const tileMaxLat = movingLat + latOffset / 2;
+                const tileMinLng = movingLng - lngOffset / 2;
+                const tileMaxLng = movingLng + lngOffset / 2;
+                
+                let ne = this.mercatorToLatLon(tileMaxLng, tileMaxLat);
+                let sw = this.mercatorToLatLon(tileMinLng, tileMinLat);
 
-        // 타일 그리드 생성
-        for (let y = 0; y < numYTiles; y++) {
-            for (let x = 0; x < numXTiles; x++) {
-                // 타일의 중심점 계산
-                const tileCenterX = boundsMin.x + x * tileSize + tileSize / 2;
-                const tileCenterY = boundsMax.y - y * tileSize - tileSize / 2;
+                tiles.push({
+                    latMin: sw.lat,
+                    lngMin: sw.lng,
+                    latMax: ne.lat,
+                    lngMax: ne.lng
+                });
 
-                // 타일 중심점을 위도/경도로 변환
-                const tileLatLon = this.mercatorToLatLon(tileCenterX, tileCenterY);
-
-                tiles.push(tileLatLon);
-
-                console.log(tileLatLon);
+                movingLng = movingLng + lngOffset;
             }
+
+            movingLng = startLng;
+            movingLat = movingLat - latOffset;
         }
 
         return tiles;
     }
 
+
     getBoundingBox(lat, lon, radius) {
-        const R = 6378137; // 지구의 반지름 (미터 단위)
+        const R = 6378137;
     
         const dLat = radius / R;
         const dLon = radius / (R * Math.cos(Math.PI * lat / 180));
@@ -158,27 +167,19 @@ export class Tile {
     }
 
     latLonToMercator(lat, lon) {
-        // 지구의 반지름 (미터 단위)
         const R = 6378137;
-    
-        // 경도(lon) -> x 좌표 변환 (단위: 미터)
+
         const x = R * (lon * Math.PI / 180);
-    
-        // 위도(lat) -> y 좌표 변환 (단위: 미터)
-        const y = R * Math.log(Math.tan((Math.PI / 4) + (lat * Math.PI / 360)));
-    
+        const y = R * Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+
         return { x: x, y: y };
     }
 
-
     mercatorToLatLon(x, y) {
-        // 지구의 반지름 (미터 단위)
         const R = 6378137;
     
-        // x 좌표 -> 경도(lon) 변환
         const lon = (x / R) * (180 / Math.PI);
     
-        // y 좌표 -> 위도(lat) 변환
         const lat = (Math.atan(Math.exp(y / R)) * 2 - Math.PI / 2) * (180 / Math.PI);
     
         return { lat: lat, lng: lon };
@@ -186,7 +187,7 @@ export class Tile {
 
 
     calculateDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371e3; // 지구의 반지름 (미터 단위)
+        const R = 6371e3;
         const radLat1 = lat1 * Math.PI / 180;
         const radLat2 = lat2 * Math.PI / 180;
         const deltaLat = (lat2 - lat1) * Math.PI / 180;
@@ -197,17 +198,16 @@ export class Tile {
                   Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     
-        const distance = R * c; // 두 지점 사이의 거리 (미터 단위)
+        const distance = R * c;
         return distance;
     }
     
-    // 중심점과 경계점 사이의 반경을 계산
     calculateRadiusFromBounds(latMin, lonMin, latMax, lonMax) {
         const centerLat = (latMin + latMax) / 2;
         const centerLon = (lonMin + lonMax) / 2;
-    
-        // 중심점에서 경계점까지의 거리 (반경)
-        const radius = this.calculateDistance(centerLat, centerLon, latMax, lonMax);
+
+        const radius = Math.max(this.calculateDistance(centerLat, centerLon, centerLat, lonMax), this.calculateDistance(centerLat, centerLon, latMax, centerLon));
+
         return radius;
     }
 
