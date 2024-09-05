@@ -81,110 +81,110 @@ export class Tile {
     }
 
 
-    async draw(centerLatLng, radius, naverProfile, onSuccess) {
-        this.setLevel(radius);
-        const defaultBlockHeight = 1000;
-        const logoRemover = 27;
+    // async draw(centerLatLng, radius, naverProfile, onSuccess) {
+    //     this.setLevel(radius);
+    //     const defaultBlockHeight = 1000;
+    //     const logoRemover = 27;
 
-        let sideBlockCount = radius.sideBlockCount;
-        let canvas = document.createElement("canvas");
-        let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+    //     let sideBlockCount = radius.sideBlockCount;
+    //     let canvas = document.createElement("canvas");
+    //     let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
 
-        canvas.width = sideBlockCount * canvasBlockSize;
-        canvas.height = sideBlockCount * canvasBlockSize;
+    //     canvas.width = sideBlockCount * canvasBlockSize;
+    //     canvas.height = sideBlockCount * canvasBlockSize;
 
-        let ctx = canvas.getContext("2d");
-        let temp = this.getNW(radius, centerLatLng);
-        let startLatLng = new LatLng(
-            temp.getX() + this.width / 2,
-            temp.getY() - this.noLogoHeight / 2
-        );
+    //     let ctx = canvas.getContext("2d");
+    //     let temp = this.getNW(radius, centerLatLng);
+    //     let startLatLng = new LatLng(
+    //         temp.getX() + this.width / 2,
+    //         temp.getY() - this.noLogoHeight / 2
+    //     );
 
-        let returnXValue = startLatLng.getX();
-        let order = 0;
-        let isCorner = false;
-        let total = sideBlockCount * sideBlockCount;
-        let complete = 0;
-        naverProfile.setHeight(1000);
+    //     let returnXValue = startLatLng.getX();
+    //     let order = 0;
+    //     let isCorner = false;
+    //     let total = sideBlockCount * sideBlockCount;
+    //     let complete = 0;
+    //     naverProfile.setHeight(1000);
 
-        let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
-            detail: {
-                total: total
-            }
+    //     let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
+    //         detail: {
+    //             total: total
+    //         }
 
-        });
+    //     });
 
-        document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
+    //     document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
 
-        for (let i = 0; i < sideBlockCount; i++) {
-            for (let j = 0; j < sideBlockCount; j++) {
+    //     for (let i = 0; i < sideBlockCount; i++) {
+    //         for (let j = 0; j < sideBlockCount; j++) {
 
-                if (i + 1 === sideBlockCount && j === 0) {
-                    naverProfile.setHeight(1000 - logoRemover);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
-                    isCorner = true;
-                }
+    //             if (i + 1 === sideBlockCount && j === 0) {
+    //                 naverProfile.setHeight(1000 - logoRemover);
+    //                 startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
+    //                 startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
+    //                 isCorner = true;
+    //             }
 
-                naverProfile.setCenter(startLatLng);
+    //             naverProfile.setCenter(startLatLng);
                 
-                let xPos = (order % sideBlockCount) * canvasBlockSize;
-                let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
+    //             let xPos = (order % sideBlockCount) * canvasBlockSize;
+    //             let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
 
-                this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0)
-                    .then((isSuccess) => {
-                        complete++;
+    //             this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0)
+    //                 .then((isSuccess) => {
+    //                     complete++;
 
-                        if (complete >= total) {
-                            onSuccess(canvas);
-                        }
-                    });
+    //                     if (complete >= total) {
+    //                         onSuccess(canvas);
+    //                     }
+    //                 });
 
-                order++;
-                startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
+    //             order++;
+    //             startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
 
-                if (isCorner) {
-                    naverProfile.setHeight(1000);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
-                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
-                    isCorner = false;
-                }
+    //             if (isCorner) {
+    //                 naverProfile.setHeight(1000);
+    //                 startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
+    //                 startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
+    //                 isCorner = false;
+    //             }
 
-                await this.delay(100);
-            }
+    //             await this.delay(100);
+    //         }
 
-            startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
-        }
-    }
+    //         startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
+    //     }
+    // }
 
 
-    async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
-        return new Promise((resolve) => {
-            let image = new Image();
-            image.crossOrigin = "*";
-            image.src = url;
+    // async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
+    //     return new Promise((resolve) => {
+    //         let image = new Image();
+    //         image.crossOrigin = "*";
+    //         image.src = url;
             
-            image.onload = function () {
-                ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
-                let mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
+    //         image.onload = function () {
+    //             ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
+    //             let mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
 
-                document.body.dispatchEvent(mapshotTileOnProgressEvent);
+    //             document.body.dispatchEvent(mapshotTileOnProgressEvent);
 
-                resolve(true);
-            };
+    //             resolve(true);
+    //         };
     
-            image.onerror = function () {
-                if(retryCount >= 1){
-                    let mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
+    //         image.onerror = function () {
+    //             if(retryCount >= 1){
+    //                 let mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
 
-                    document.body.dispatchEvent(mapshotTileOnErrorEvent);
-                    resolve(true);
-                } else {
-                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount + 1));
-                }
-            };
-        });
-    }
+    //                 document.body.dispatchEvent(mapshotTileOnErrorEvent);
+    //                 resolve(true);
+    //             } else {
+    //                 resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount + 1));
+    //             }
+    //         };
+    //     });
+    // }
 
     delay(millis){
         return new Promise(function(resolve){
