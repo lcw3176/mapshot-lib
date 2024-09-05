@@ -76,8 +76,8 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
       this.withLogoHeight = this.withLogoValue + (controlPoint - latlng.getY()) * this.correctFix;
     }
   }, {
-    key: "refineValues",
-    value: function refineValues(radius) {
+    key: "setLevel",
+    value: function setLevel(radius) {
       if (radius.zoom === Radius.One.zoom || radius.zoom === Radius.Two.zoom) {
         this.correctFix = 0.00002833;
         this.width = 0.00268;
@@ -95,7 +95,7 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getSE",
     value: function getSE(radius, latlng) {
-      this.refineValues(radius);
+      this.setLevel(radius);
       this.generate(latlng);
       var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
       var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
@@ -104,7 +104,7 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getSW",
     value: function getSW(radius, latlng) {
-      this.refineValues(radius);
+      this.setLevel(radius);
       this.generate(latlng);
       var Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
       var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
@@ -113,7 +113,7 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getNE",
     value: function getNE(radius, latlng) {
-      this.refineValues(radius);
+      this.setLevel(radius);
       this.generate(latlng);
       var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
       var Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
@@ -122,85 +122,105 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
   }, {
     key: "getNW",
     value: function getNW(radius, latlng) {
-      this.refineValues(radius);
+      this.setLevel(radius);
       this.generate(latlng);
       var Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
       var Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
       return new LatLng(Lat, Lng);
     }
   }, {
-    key: "drawLayers",
+    key: "draw",
     value: function () {
-      var _drawLayers = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(centerLatLng, nwLatLng, canvas, width, layerProfile) {
-        var defaultBlockHeight, heightOffset, widthOffset, ctx, startLatLng, sideBlockCount, fisrtXValue, order, i, j, yMin, xMin, yMax, xMax, xPos, yPos;
+      var _draw = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(centerLatLng, radius, naverProfile, onSuccess) {
+        var defaultBlockHeight, logoRemover, sideBlockCount, canvas, canvasBlockSize, ctx, temp, startLatLng, returnXValue, order, isCorner, total, complete, mapshotTileOnLoadStartEvent, i, j, xPos, yPos;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              defaultBlockHeight = 500;
-              canvas.width = width;
-              canvas.height = width;
-              heightOffset = (nwLatLng.getY() - centerLatLng.getY()) * 2 / (width / defaultBlockHeight) / 2;
-              widthOffset = (centerLatLng.getX() - nwLatLng.getX()) * 2 / (width / defaultBlockHeight) / 2;
+              this.setLevel(radius);
+              defaultBlockHeight = 1000;
+              logoRemover = 27;
+              sideBlockCount = radius.sideBlockCount;
+              canvas = document.createElement("canvas");
+              canvasBlockSize = sideBlockCount <= 11 ? 1000 : 500;
+              canvas.width = sideBlockCount * canvasBlockSize;
+              canvas.height = sideBlockCount * canvasBlockSize;
               ctx = canvas.getContext("2d");
-              startLatLng = new LatLng(nwLatLng.getY() - heightOffset, nwLatLng.getX() + widthOffset);
-              sideBlockCount = width / defaultBlockHeight;
-              fisrtXValue = startLatLng.getX();
+              temp = this.getNW(radius, centerLatLng);
+              startLatLng = new LatLng(temp.getX() + this.width / 2, temp.getY() - this.noLogoHeight / 2);
+              returnXValue = startLatLng.getX();
               order = 0;
-              layerProfile.setHeight(defaultBlockHeight);
+              isCorner = false;
+              total = sideBlockCount * sideBlockCount;
+              complete = 0;
+              naverProfile.setHeight(1000);
+              mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
+                detail: {
+                  total: total
+                }
+              });
+              document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
               i = 0;
-            case 12:
+            case 20:
               if (!(i < sideBlockCount)) {
-                _context.next = 38;
+                _context.next = 40;
                 break;
               }
               j = 0;
-            case 14:
+            case 22:
               if (!(j < sideBlockCount)) {
-                _context.next = 34;
+                _context.next = 36;
                 break;
               }
-              yMin = startLatLng.getY() - heightOffset;
-              xMin = startLatLng.getX() - widthOffset;
-              yMax = startLatLng.getY() + heightOffset;
-              xMax = startLatLng.getX() + widthOffset;
-              layerProfile.setYMin(yMin);
-              layerProfile.setXMin(xMin);
-              layerProfile.setYMax(yMax);
-              layerProfile.setXMax(xMax);
-              xPos = order % sideBlockCount * defaultBlockHeight;
-              yPos = parseInt(order / sideBlockCount) * defaultBlockHeight;
-              _context.next = 27;
-              return this.processImage(layerProfile.getUrl(), xPos, yPos, defaultBlockHeight, ctx, 0);
-            case 27:
+              if (i + 1 === sideBlockCount && j === 0) {
+                naverProfile.setHeight(1000 - logoRemover);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
+                isCorner = true;
+              }
+              naverProfile.setCenter(startLatLng);
+              xPos = order % sideBlockCount * canvasBlockSize;
+              yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
+              this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0).then(function (isSuccess) {
+                complete++;
+                if (complete >= total) {
+                  onSuccess(canvas);
+                }
+              });
               order++;
-              startLatLng.init(startLatLng.getX() + widthOffset * 2, startLatLng.getY());
-              _context.next = 31;
+              startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
+              if (isCorner) {
+                naverProfile.setHeight(1000);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
+                startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
+                isCorner = false;
+              }
+              _context.next = 33;
               return this.delay(100);
-            case 31:
+            case 33:
               j++;
-              _context.next = 14;
+              _context.next = 22;
               break;
-            case 34:
-              startLatLng.init(fisrtXValue, startLatLng.getY() - heightOffset * 2);
-            case 35:
+            case 36:
+              startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
+            case 37:
               i++;
-              _context.next = 12;
+              _context.next = 20;
               break;
-            case 38:
+            case 40:
             case "end":
               return _context.stop();
           }
         }, _callee, this);
       }));
-      function drawLayers(_x, _x2, _x3, _x4, _x5) {
-        return _drawLayers.apply(this, arguments);
+      function draw(_x, _x2, _x3, _x4) {
+        return _draw.apply(this, arguments);
       }
-      return drawLayers;
+      return draw;
     }()
   }, {
     key: "processImage",
     value: function () {
-      var _processImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(url, xPos, yPos, defaultBlockHeight, ctx, retryCount) {
+      var _processImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
@@ -209,14 +229,18 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
                 image.crossOrigin = "*";
                 image.src = url;
                 image.onload = function () {
-                  ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, defaultBlockHeight, defaultBlockHeight);
+                  ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
+                  var mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
+                  document.body.dispatchEvent(mapshotTileOnProgressEvent);
                   resolve(true);
                 };
                 image.onerror = function () {
                   if (retryCount >= 1) {
+                    var mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
+                    document.body.dispatchEvent(mapshotTileOnErrorEvent);
                     resolve(true);
                   } else {
-                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, ctx, retryCount + 1));
+                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount + 1));
                   }
                 };
               }));
@@ -226,7 +250,7 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
           }
         }, _callee2);
       }));
-      function processImage(_x6, _x7, _x8, _x9, _x10, _x11) {
+      function processImage(_x5, _x6, _x7, _x8, _x9, _x10, _x11) {
         return _processImage.apply(this, arguments);
       }
       return processImage;
@@ -245,53 +269,41 @@ var Tile = exports.Tile = /*#__PURE__*/function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Layer = void 0;
+exports.Naver = void 0;
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-var Layer = exports.Layer = /*#__PURE__*/function () {
-  function Layer() {
-    _classCallCheck(this, Layer);
-    this.layers = [];
-    this.yMin;
-    this.xMin;
-    this.yMax;
-    this.xMax;
+var Naver = exports.Naver = /*#__PURE__*/function () {
+  function Naver() {
+    _classCallCheck(this, Naver);
+    this.mapType;
+    this.center;
+    this.level;
+    this.key;
     this.height;
-    this.url;
   }
-  return _createClass(Layer, [{
-    key: "setLayer",
-    value: function setLayer(param) {
-      this.layers = param;
+  return _createClass(Naver, [{
+    key: "setMapType",
+    value: function setMapType(param) {
+      this.mapType = param;
     }
   }, {
-    key: "removeLayer",
-    value: function removeLayer() {
-      this.layers.length = 0;
+    key: "setCenter",
+    value: function setCenter(param) {
+      this.center = param;
     }
   }, {
-    key: "setYMin",
-    value: function setYMin(param) {
-      this.yMin = param;
+    key: "setLevel",
+    value: function setLevel(radius) {
+      this.level = radius.zoom;
     }
   }, {
-    key: "setXMin",
-    value: function setXMin(param) {
-      this.xMin = param;
-    }
-  }, {
-    key: "setYMax",
-    value: function setYMax(param) {
-      this.yMax = param;
-    }
-  }, {
-    key: "setXMax",
-    value: function setXMax(param) {
-      this.xMax = param;
+    key: "setKey",
+    value: function setKey(param) {
+      this.key = param;
     }
   }, {
     key: "setHeight",
@@ -299,14 +311,9 @@ var Layer = exports.Layer = /*#__PURE__*/function () {
       this.height = param;
     }
   }, {
-    key: "setUrl",
-    value: function setUrl(param) {
-      this.url = param;
-    }
-  }, {
     key: "getUrl",
     value: function getUrl() {
-      return this.url + "?layer=" + this.layers.join() + "&ymin=" + this.yMin + "&xmin=" + this.xMin + "&ymax=" + this.yMax + "&xmax=" + this.xMax + "&height=" + this.height;
+      return "https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?" + "w=1000" + "&h=" + this.height + "&center=" + this.center.getX() + "," + this.center.getY() + "&level=" + this.level + "&X-NCP-APIGW-API-KEY-ID=" + this.key + "&maptype=" + this.mapType;
     }
   }]);
 }();

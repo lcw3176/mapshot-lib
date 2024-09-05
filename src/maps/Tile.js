@@ -1,214 +1,189 @@
 export class Tile {
     constructor() {
-        this.imageHeight = 1000;
+        this.width;
+        this.noLogoHeight; // 로고 없을 때
+        this.withLogoHeight; // 로고 있을 때
+
+        this.noLogoValue;
+        this.withLogoValue;
+        this.correctFix;
+
     }
 
-    
-    getSE(radius, latlng) {
-        let bbox = this.getBoundingBox(latlng.getY(), latlng.getX(), radius.level * 1000);
+    generate(latlng) {
+        const controlPoint = 37.5668;
 
-        let Lat = bbox.latMin;
-        let Lng = bbox.lngMax;
+        this.noLogoHeight = this.noLogoValue + (controlPoint - latlng.getY()) * this.correctFix;
+        this.withLogoHeight = this.withLogoValue + (controlPoint - latlng.getY()) * this.correctFix;
+
+    }
+
+    setLevel(radius) {
+
+        if (radius.zoom === Radius.One.zoom || radius.zoom === Radius.Two.zoom) {
+            this.correctFix = 0.00002833;
+            this.width = 0.00268;
+            this.noLogoValue = 0.002070;
+            this.withLogoValue = 0.00204;
+
+        } else if (radius.zoom === Radius.Five.zoom || radius.zoom === Radius.Ten.zoom) {
+            this.correctFix = 0.00011633;
+            this.width = 0.01072;
+            this.noLogoValue = 0.00829;
+            this.withLogoValue = 0.00817;
+        } else {
+            throw "Parameter is not radius Type";
+        }
+    }
+
+
+    getSE(radius, latlng) {
+        this.setLevel(radius);
+        this.generate(latlng);
+
+        let Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+        let Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
 
 
     getSW(radius, latlng) {
-        let bbox = this.getBoundingBox(latlng.getY(), latlng.getX(), radius.level * 1000);
+        this.setLevel(radius);
+        this.generate(latlng);
 
-        let Lat = bbox.latMin;
-        let Lng = bbox.lngMin;
+        let Lat = latlng.getY() - this.noLogoHeight * parseInt(radius.sideBlockCount / 2) - this.noLogoHeight / 2;
+        let Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
 
 
     getNE(radius, latlng) {
-        let bbox = this.getBoundingBox(latlng.getY(), latlng.getX(), radius.level * 1000);
+        this.setLevel(radius);
+        this.generate(latlng);
 
-        let Lat = bbox.latMax;
-        let Lng = bbox.lngMax;
+        let Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+        let Lng = latlng.getX() + this.width * parseInt(radius.sideBlockCount / 2) + this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
 
 
     getNW(radius, latlng) {
-        let bbox = this.getBoundingBox(latlng.getY(), latlng.getX(), radius.level * 1000);
+        this.setLevel(radius);
+        this.generate(latlng);
 
-        let Lat = bbox.latMax;
-        let Lng = bbox.lngMin;
+        let Lat = latlng.getY() + this.noLogoHeight * parseInt(radius.sideBlockCount / 2) + this.noLogoHeight / 2;
+        let Lng = latlng.getX() - this.width * parseInt(radius.sideBlockCount / 2) - this.width / 2;
 
         return new LatLng(Lat, Lng);
     }
 
 
-    async drawLayers(ne, sw, center, canvas, templateWidth, layerProfile) {
-        canvas.width = templateWidth;
-        canvas.height = templateWidth;
+    async draw(centerLatLng, radius, naverProfile, onSuccess) {
+        this.setLevel(radius);
+        const defaultBlockHeight = 1000;
+        const logoRemover = 27;
+
+        let sideBlockCount = radius.sideBlockCount;
+        let canvas = document.createElement("canvas");
+        let canvasBlockSize = (sideBlockCount <= 11) ? 1000 : 500;
+
+        canvas.width = sideBlockCount * canvasBlockSize;
+        canvas.height = sideBlockCount * canvasBlockSize;
 
         let ctx = canvas.getContext("2d");
-   
-        
-        let radiusMeter = this.calculateRadiusFromBounds(sw.getY(), sw.getX(), ne.getY(), ne.getX()); 
-        let fixedCoord = this.getBoundingBox(center.getY(), center.getX(), radiusMeter)
-        const tiles = this.generateTilesByBounds(fixedCoord.latMin, fixedCoord.lngMin, fixedCoord.latMax, fixedCoord.lngMax, templateWidth);
+        let temp = this.getNW(radius, centerLatLng);
+        let startLatLng = new LatLng(
+            temp.getX() + this.width / 2,
+            temp.getY() - this.noLogoHeight / 2
+        );
 
-        layerProfile.setHeight(this.imageHeight);
+        let returnXValue = startLatLng.getX();
+        let order = 0;
+        let isCorner = false;
+        let total = sideBlockCount * sideBlockCount;
+        let complete = 0;
+        naverProfile.setHeight(1000);
 
-        let index = 0;
-        
-        for(const tile of tiles) {
-
-            layerProfile.setYMin(tile.latMin);
-            layerProfile.setXMin(tile.lngMin);
-            layerProfile.setYMax(tile.latMax);
-            layerProfile.setXMax(tile.lngMax);
-
-            let xPos = parseInt(index * this.imageHeight % templateWidth);
-            let yPos = parseInt(index * this.imageHeight / templateWidth) * this.imageHeight;
-            
-
-            let success = await this.processImage(layerProfile.getUrl(), xPos, yPos, this.imageHeight, ctx);
-
-            if(!success){
-                await this.processImage(layerProfile.getUrl(), xPos, yPos, this.imageHeight, ctx);
+        let mapshotTileOnLoadStartEvent = new CustomEvent("mapshotTileOnLoadStart", {
+            detail: {
+                total: total
             }
 
-            await this.delay(100);
-            index++;
-        };
+        });
 
+        document.body.dispatchEvent(mapshotTileOnLoadStartEvent);
+
+        for (let i = 0; i < sideBlockCount; i++) {
+            for (let j = 0; j < sideBlockCount; j++) {
+
+                if (i + 1 === sideBlockCount && j === 0) {
+                    naverProfile.setHeight(1000 - logoRemover);
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.noLogoHeight);
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.withLogoHeight);
+                    isCorner = true;
+                }
+
+                naverProfile.setCenter(startLatLng);
+                
+                let xPos = (order % sideBlockCount) * canvasBlockSize;
+                let yPos = parseInt(order / sideBlockCount) * canvasBlockSize;
+
+                this.processImage(naverProfile.getUrl(), xPos, yPos, defaultBlockHeight - logoRemover, canvasBlockSize, ctx, 0)
+                    .then((isSuccess) => {
+                        complete++;
+
+                        if (complete >= total) {
+                            onSuccess(canvas);
+                        }
+                    });
+
+                order++;
+                startLatLng.init(startLatLng.getX() + this.width, startLatLng.getY());
+
+                if (isCorner) {
+                    naverProfile.setHeight(1000);
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() + this.withLogoHeight);
+                    startLatLng.init(startLatLng.getX(), startLatLng.getY() - this.noLogoHeight);
+                    isCorner = false;
+                }
+
+                await this.delay(100);
+            }
+
+            startLatLng.init(returnXValue, startLatLng.getY() - this.noLogoHeight);
+        }
     }
 
-    async processImage(url, xPos, yPos, defaultBlockHeight, ctx) {
+
+    async processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount) {
         return new Promise((resolve) => {
             let image = new Image();
             image.crossOrigin = "*";
             image.src = url;
             
-            console.log(xPos, yPos, defaultBlockHeight);
             image.onload = function () {
-                ctx.drawImage(image, xPos, yPos, defaultBlockHeight, defaultBlockHeight);
+                ctx.drawImage(image, 0, 0, image.width, defaultBlockHeight, xPos, yPos, canvasBlockSize, canvasBlockSize);
+                let mapshotTileOnProgressEvent = new CustomEvent("mapshotTileOnProgress");
+
+                document.body.dispatchEvent(mapshotTileOnProgressEvent);
+
                 resolve(true);
             };
     
             image.onerror = function () {
-                resolve(false);
+                if(retryCount >= 1){
+                    let mapshotTileOnErrorEvent = new CustomEvent("mapshotTileOnError");
+
+                    document.body.dispatchEvent(mapshotTileOnErrorEvent);
+                    resolve(true);
+                } else {
+                    resolve(this.processImage(url, xPos, yPos, defaultBlockHeight, canvasBlockSize, ctx, retryCount + 1));
+                }
             };
         });
-    }
-
-
-    generateTilesByBounds(latMin, lngMin, latMax, lngMax, templateWidth) {
-        let divide = templateWidth / this.imageHeight;
-
-        const boundsMin = this.latLonToMercator(latMin, lngMin);
-        const boundsMax = this.latLonToMercator(latMax, lngMax);
-
-        let latOffset = (boundsMax.y - boundsMin.y) / divide;
-        let lngOffset = (boundsMax.x - boundsMin.x) / divide;
-
-        let startLat = boundsMax.y - latOffset / 2;
-        let startLng = boundsMin.x + lngOffset / 2;
-     
-        let movingLat = startLat;
-        let movingLng = startLng;
-
-        const tiles = [];
-
-        for (let y = 0; y < divide; y++) {
-            for (let x = 0; x < divide; x++) {
-                
-                const tileMinLat = movingLat - latOffset / 2;
-                const tileMaxLat = movingLat + latOffset / 2;
-                const tileMinLng = movingLng - lngOffset / 2;
-                const tileMaxLng = movingLng + lngOffset / 2;
-                
-                let ne = this.mercatorToLatLon(tileMaxLng, tileMaxLat);
-                let sw = this.mercatorToLatLon(tileMinLng, tileMinLat);
-
-                tiles.push({
-                    latMin: sw.lat,
-                    lngMin: sw.lng,
-                    latMax: ne.lat,
-                    lngMax: ne.lng
-                });
-
-                movingLng = movingLng + lngOffset;
-            }
-
-            movingLng = startLng;
-            movingLat = movingLat - latOffset;
-        }
-
-        return tiles;
-    }
-
-
-    getBoundingBox(lat, lon, radius) {
-        const R = 6378137;
-    
-        const dLat = radius / R;
-        const dLon = radius / (R * Math.cos(Math.PI * lat / 180));
-    
-        const latMin = lat - dLat * (180 / Math.PI);
-        const latMax = lat + dLat * (180 / Math.PI);
-        const lonMin = lon - dLon * (180 / Math.PI);
-        const lonMax = lon + dLon * (180 / Math.PI);
-    
-        return {
-            latMin: latMin,
-            latMax: latMax,
-            lngMin: lonMin,
-            lngMax: lonMax
-        };
-    }
-
-    latLonToMercator(lat, lon) {
-        const R = 6378137;
-
-        const x = R * (lon * Math.PI / 180);
-        const y = R * Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
-
-        return { x: x, y: y };
-    }
-
-    mercatorToLatLon(x, y) {
-        const R = 6378137;
-    
-        const lon = (x / R) * (180 / Math.PI);
-    
-        const lat = (Math.atan(Math.exp(y / R)) * 2 - Math.PI / 2) * (180 / Math.PI);
-    
-        return { lat: lat, lng: lon };
-    }
-
-
-    calculateDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371e3;
-        const radLat1 = lat1 * Math.PI / 180;
-        const radLat2 = lat2 * Math.PI / 180;
-        const deltaLat = (lat2 - lat1) * Math.PI / 180;
-        const deltaLon = (lon2 - lon1) * Math.PI / 180;
-    
-        const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-                  Math.cos(radLat1) * Math.cos(radLat2) *
-                  Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    
-        const distance = R * c;
-        return distance;
-    }
-    
-    calculateRadiusFromBounds(latMin, lonMin, latMax, lonMax) {
-        const centerLat = (latMin + latMax) / 2;
-        const centerLon = (lonMin + lonMax) / 2;
-
-        const radius = Math.max(this.calculateDistance(centerLat, centerLon, centerLat, lonMax), this.calculateDistance(centerLat, centerLon, latMax, centerLon));
-
-        return radius;
     }
 
     delay(millis){
